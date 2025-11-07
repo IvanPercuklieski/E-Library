@@ -41,6 +41,23 @@ public class Seat {
 
     }
 
+    public Long getId() {
+        return id;
+    }
 
+    public int getSeatNumber() {
+        return seatNumber;
+    }
 
+    public boolean isTaken() {
+        return isTaken;
+    }
+
+    public UserWrapper getUser() {
+        return user;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
 }

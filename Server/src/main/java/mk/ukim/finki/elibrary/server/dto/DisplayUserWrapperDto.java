@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public record DisplayUserWrapperDto(Long id,
                                     String name,
                                     String surname,
-                                    LocalDate from,
+                                    LocalDate fromDate,
                                     LocalDate dueDate,
                                     boolean zachlenet,
                                     List<String> borrowedBookTitles) {
@@ -25,7 +25,7 @@ public record DisplayUserWrapperDto(Long id,
                 user.getId(),
                 user.getName(),
                 user.getSurname(),
-                user.getFrom(),
+                user.getFromDate(),
                 user.getDueDate(),
                 user.isZachlenet(),
                 borrowedTitles

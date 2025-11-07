@@ -62,4 +62,20 @@ public class BorrowedBook {
     public BookCopy getBookCopy() {
         return bookCopy;
     }
+
+    public void setBorrowedAt(LocalDateTime borrowedAt) {
+        this.borrowedAt = borrowedAt;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setUser(UserWrapper user) {
+        this.user = user;
+    }
+
+    public void setBookCopy(BookCopy bookCopy) {
+        this.bookCopy = bookCopy;
+    }
 }

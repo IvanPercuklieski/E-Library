@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public record CreateUserWrapperDto(String name,
                                    String surname,
-                                   LocalDate from,
+                                   LocalDate fromDate,
                                    LocalDate dueDate,
                                    boolean zachlenet) {
 
@@ -15,7 +15,7 @@ public record CreateUserWrapperDto(String name,
         UserWrapper user = new UserWrapper();
         user.setName(this.name);
         user.setSurname(this.surname);
-        user.setFrom(this.from);
+        user.setFromDate(this.fromDate);
         user.setDueDate(this.dueDate);
         user.setZachlenet(this.zachlenet);
         return user;

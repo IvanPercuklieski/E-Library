@@ -95,4 +95,32 @@ public class BaseBook {
     public List<BookCopy> getCopies() {
         return copies;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public void setPubDate(LocalDate pubDate) {
+        this.pubDate = pubDate;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setNumBooks(int numBooks) {
+        this.numBooks = numBooks;
+    }
+
+    public void setCopies(List<BookCopy> copies) {
+        this.copies = copies;
+    }
 }

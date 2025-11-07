@@ -49,20 +49,21 @@ public class BookBorrowLog {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
+    @Column(columnDefinition = "TIMESTAMP")
     public LocalDateTime getBorrowedAt() {
         return borrowedAt;
     }
-
+    @Column(columnDefinition = "TIMESTAMP")
     public LocalDateTime getReturnedAt() {
         return returnedAt;
     }
-
+    @Column(columnDefinition = "TIMESTAMP")
     public LocalDateTime getDueDate() {
         return dueDate;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getNotes() {
@@ -75,5 +76,29 @@ public class BookBorrowLog {
 
     public UserWrapper getUser() {
         return user;
+    }
+
+    public void setBorrowedAt(LocalDateTime borrowedAt) {
+        this.borrowedAt = borrowedAt;
+    }
+
+    public void setReturnedAt(LocalDateTime returnedAt) {
+        this.returnedAt = returnedAt;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public void setBookCopy(BookCopy bookCopy) {
+        this.bookCopy = bookCopy;
+    }
+
+    public void setUser(UserWrapper user) {
+        this.user = user;
     }
 }

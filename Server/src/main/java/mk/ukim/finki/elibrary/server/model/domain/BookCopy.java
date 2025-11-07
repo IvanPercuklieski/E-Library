@@ -36,4 +36,8 @@ public class BookCopy {
     public BaseBook getBaseBook() {
         return baseBook;
     }
+
+    public void setBaseBook(BaseBook baseBook) {
+        this.baseBook = baseBook;
+    }
 }

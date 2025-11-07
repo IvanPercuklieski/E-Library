@@ -37,4 +37,13 @@ public class Author {
     public List<BaseBook> getBooks() {
         return books;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBooks(List<BaseBook> books) {
+        this.books = books;
+    }
+
 }

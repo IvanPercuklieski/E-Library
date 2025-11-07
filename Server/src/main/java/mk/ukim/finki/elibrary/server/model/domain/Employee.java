@@ -66,4 +66,24 @@ public class Employee {
     public EmployeeType getRole() {
         return role;
     }
+
+    public void setUser(UserWrapper user) {
+        this.user = user;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setRole(EmployeeType role) {
+        this.role = role;
+    }
 }
