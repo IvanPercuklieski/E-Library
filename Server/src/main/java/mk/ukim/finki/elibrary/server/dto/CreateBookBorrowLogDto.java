@@ -14,4 +14,29 @@ public record CreateBookBorrowLogDto(Long userId,
     public BookBorrowLog toBorrowLog(BookCopy bookCopy, UserWrapper user) {
         return new BookBorrowLog(null, borrowedAt, null, dueDate, notes, bookCopy, user);
     }
+
+    @Override
+    public Long userId() {
+        return userId;
+    }
+
+    @Override
+    public Long bookCopyId() {
+        return bookCopyId;
+    }
+
+    @Override
+    public LocalDateTime borrowedAt() {
+        return borrowedAt;
+    }
+
+    @Override
+    public LocalDateTime dueDate() {
+        return dueDate;
+    }
+
+    @Override
+    public String notes() {
+        return notes;
+    }
 }

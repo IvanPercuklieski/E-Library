@@ -31,7 +31,9 @@ public class UserWrapper {
     @OneToMany(mappedBy = "user")
     private List<BorrowedBook> borrowedBooks;
 
-    public UserWrapper(Long id, String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean zachlenet, List<BorrowedBook> borrowedBooks) {
+    private String email;
+
+    public UserWrapper(Long id, String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean zachlenet,String email ,List<BorrowedBook> borrowedBooks) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -39,19 +41,25 @@ public class UserWrapper {
         this.dueDate = dueDate;
         this.zachlenet = zachlenet;
         this.borrowedBooks = borrowedBooks;
+        this.email=email;
     }
 
-    public UserWrapper(String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean zachlenet) {
+    public UserWrapper(String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean zachlenet, String email) {
         this.name = name;
         this.surname = surname;
         this.fromDate = fromDate;
         this.dueDate = dueDate;
         this.zachlenet = zachlenet;
+        this.email=email;
 
     }
 
     public UserWrapper() {
 
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public Long getId() {
