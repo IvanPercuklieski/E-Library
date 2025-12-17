@@ -60,4 +60,24 @@ public class Seat {
     public Room getRoom() {
         return room;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setSeatNumber(int seatNumber) {
+        this.seatNumber = seatNumber;
+    }
+
+    public void setTaken(boolean taken) {
+        isTaken = taken;
+    }
+
+    public void setUser(UserWrapper user) {
+        this.user = user;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 }

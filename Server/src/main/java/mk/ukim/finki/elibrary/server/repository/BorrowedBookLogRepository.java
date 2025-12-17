@@ -1,10 +1,12 @@
 package mk.ukim.finki.elibrary.server.repository;
 
-import mk.ukim.finki.elibrary.server.model.domain.BaseBook;
 import mk.ukim.finki.elibrary.server.model.domain.BookBorrowLog;
+import mk.ukim.finki.elibrary.server.model.domain.BookCopy;
 import mk.ukim.finki.elibrary.server.model.domain.UserWrapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
+
 
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
@@ -48,5 +50,10 @@ public interface BorrowedBookLogRepository extends JpaRepository<BookBorrowLog, 
         order by l.borrowedAt asc
     """)
     List<BookBorrowLog> findByUserIdOrderByBorrowedAtAsc(Long userId);
+
+    List<BookBorrowLog> findByBookCopy(BookCopy bookCopy);
+
+    Optional<BookBorrowLog> findByBookCopyAndUserAndReturnedAtIsNull(BookCopy bookCopy, UserWrapper user);
+
 
 }

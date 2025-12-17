@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findByRoom(Room room);
     Optional<Seat> findByRoomAndSeatNumber(Room room, int seatNumber);
+    List<Seat> findByRoomIdAndIsTakenFalse(Long roomId);
 }
