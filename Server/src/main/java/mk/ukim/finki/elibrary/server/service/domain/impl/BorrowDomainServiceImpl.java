@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 
@@ -111,13 +112,24 @@ public class BorrowDomainServiceImpl implements BorrowDomainService {
     }
 
 
-    @Override
-    public double calculateRentalFee(Long userId, int days) {
+    public double calculateRentalFee(Long userId) {
         UserWrapper user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserWrapperNotFoundException(userId));
+
         List<BorrowedBook> borrowed = borrowedBookRepository.findByUser(user);
-        return borrowed.size() * days * 10.0;
+
+        double pricePerDay = 10.0;
+        LocalDate today = LocalDate.now();
+
+        return borrowed.stream()
+                .mapToDouble(b -> {
+                    long days = ChronoUnit.DAYS.between(b.getBorrowedAt(), today);
+                    if (days == 0) days = 1;
+                    return days * pricePerDay;
+                })
+                .sum();
     }
+
 
 
     @Override
@@ -126,6 +138,11 @@ public class BorrowDomainServiceImpl implements BorrowDomainService {
                 .orElseThrow(() -> new BookCopyNotFoundException(bookCopyId));
         boolean isBorrowed = borrowedBookRepository.existsByBookCopy(copy);
         return !isBorrowed;
+    }
+
+    @Override
+    public List<BorrowedBook> allBorrowedBooks() {
+        return borrowedBookRepository.findAll();
     }
 
 }

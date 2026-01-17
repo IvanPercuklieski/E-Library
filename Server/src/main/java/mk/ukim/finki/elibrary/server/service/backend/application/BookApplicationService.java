@@ -1,6 +1,8 @@
 package mk.ukim.finki.elibrary.server.service.backend.application;
 
 
+import mk.ukim.finki.elibrary.server.dto.BookDetailsDto;
+import mk.ukim.finki.elibrary.server.dto.ReviewDisplayDto;
 import mk.ukim.finki.elibrary.server.model.domain.BaseBook;
 import mk.ukim.finki.elibrary.server.model.domain.BookCopy;
 
@@ -24,5 +26,12 @@ public interface BookApplicationService {
     List<BaseBook> getRecommendedBooksForUser(Long userId);
 
     List<BookCopy> getAvailableBookCopies(Long bookId);
+
+    BookDetailsDto getBookDetails(Long bookId);
+
+    void addReview(Long bookId, Long userId, String text, int rating);
+
+    List<ReviewDisplayDto> getReviewsForBook(Long bookId);
+
 }
 

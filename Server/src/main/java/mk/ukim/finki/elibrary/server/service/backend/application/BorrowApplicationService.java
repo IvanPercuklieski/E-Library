@@ -17,7 +17,9 @@ public interface BorrowApplicationService {
 
     List<BookBorrowLog> getBorrowHistory(Long bookCopyId);
 
-    double calculateRentalFee(Long userId, int days);
+    double calculateRentalFee(Long userId);
 
     boolean isBookAvailable(Long bookCopyId);
+
+    List<BorrowedBook> listAll();
 }

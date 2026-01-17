@@ -41,12 +41,17 @@ public class BorrowApplicationServiceImpl implements BorrowApplicationService {
     }
 
     @Override
-    public double calculateRentalFee(Long userId, int days) {
-        return borrowDomainService.calculateRentalFee(userId, days);
+    public double calculateRentalFee(Long userId) {
+        return borrowDomainService.calculateRentalFee(userId);
     }
 
     @Override
     public boolean isBookAvailable(Long bookCopyId) {
         return borrowDomainService.isBookAvailable(bookCopyId);
+    }
+
+    @Override
+    public List<BorrowedBook> listAll() {
+        return borrowDomainService.allBorrowedBooks();
     }
 }
