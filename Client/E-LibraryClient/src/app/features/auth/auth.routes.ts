@@ -12,6 +12,5 @@ export const AUTH_ROUTES: Routes = [
     {
         path: '',
         redirectTo: 'login',
-        
     }
 ]

@@ -7,8 +7,8 @@ export const routes: Routes = [
         pathMatch: 'full'
     },
     {
-        path: "**",
-        redirectTo: 'home'
+        path: 'home',
+        loadChildren: () => import('./features/home-page/home-page.routes').then(m => m.HOME_PAGE_ROUTES)
     },
     {
         path: 'auth',
@@ -17,6 +17,14 @@ export const routes: Routes = [
     {
         path: 'admin-panel',
         loadChildren: () => import('./features/admin-panel/admin-panel.routes').then(m => m.ADMIN_PANEL_ROUTES)
+    },
+    {
+        path: 'seating',
+        loadChildren: () => import('./features/seating/seating.routes').then(m => m.SEATING_ROUTES)
+    },
+    {
+        path: "**",
+        redirectTo: 'home'
     }
     
 ]
