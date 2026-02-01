@@ -1,10 +1,12 @@
 package mk.ukim.finki.elibrary.server.model.domain;
+import lombok.NoArgsConstructor;
 import mk.ukim.finki.elibrary.server.model.enumerations.EmployeeType;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Employee {
 
     @Id
@@ -36,54 +38,6 @@ public class Employee {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = role;
-    }
-
-    public Employee() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public UserWrapper getUser() {
-        return user;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public EmployeeType getRole() {
-        return role;
-    }
-
-    public void setUser(UserWrapper user) {
-        this.user = user;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setRole(EmployeeType role) {
         this.role = role;
     }
 }

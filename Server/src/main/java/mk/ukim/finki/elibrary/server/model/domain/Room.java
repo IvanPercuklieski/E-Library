@@ -2,11 +2,13 @@ package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Room {
 
     @Id
@@ -32,47 +34,6 @@ public class Room {
         this.name = name;
         this.location = location;
         this.numSeats = numSeats;
-        this.seats = seats;
-    }
-
-
-    public Room() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public int getNumSeats() {
-        return numSeats;
-    }
-
-    public List<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setNumSeats(int numSeats) {
-        this.numSeats = numSeats;
-    }
-
-    public void setSeats(List<Seat> seats) {
         this.seats = seats;
     }
 }

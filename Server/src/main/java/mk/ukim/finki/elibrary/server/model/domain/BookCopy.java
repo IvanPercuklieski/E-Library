@@ -2,10 +2,12 @@ package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
 @Entity
+@NoArgsConstructor
 public class BookCopy {
 
     @Id
@@ -22,22 +24,6 @@ public class BookCopy {
     }
 
     public BookCopy(BaseBook baseBook) {
-        this.baseBook = baseBook;
-    }
-
-    public BookCopy() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public BaseBook getBaseBook() {
-        return baseBook;
-    }
-
-    public void setBaseBook(BaseBook baseBook) {
         this.baseBook = baseBook;
     }
 }

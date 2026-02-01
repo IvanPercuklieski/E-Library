@@ -2,12 +2,14 @@ package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class BaseBook {
 
     @Id
@@ -30,7 +32,7 @@ public class BaseBook {
 
     private LocalDate pubDate;
 
-    @Column(length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private int numBooks;
@@ -57,70 +59,6 @@ public class BaseBook {
         this.pubDate = pubDate;
         this.description = description;
         this.numBooks = numBooks;
-        this.copies = copies;
-    }
-
-    public BaseBook() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Author getAuthor() {
-        return author;
-    }
-
-    public List<Genre> getGenres() {
-        return genres;
-    }
-
-    public LocalDate getPubDate() {
-        return pubDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getNumBooks() {
-        return numBooks;
-    }
-
-    public List<BookCopy> getCopies() {
-        return copies;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setAuthor(Author author) {
-        this.author = author;
-    }
-
-    public void setGenres(List<Genre> genres) {
-        this.genres = genres;
-    }
-
-    public void setPubDate(LocalDate pubDate) {
-        this.pubDate = pubDate;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setNumBooks(int numBooks) {
-        this.numBooks = numBooks;
-    }
-
-    public void setCopies(List<BookCopy> copies) {
         this.copies = copies;
     }
 }

@@ -62,6 +62,7 @@ public class BorrowDomainServiceImpl implements BorrowDomainService {
         borrowed.setDueDate(dueDate);
         borrowedBookRepository.save(borrowed);
 
+        //TODO Tuka ne treba da e BorrowBookLog ???
         BorrowedBook log = new BorrowedBook();
         log.setBookCopy(copy);
         log.setUser(user);
@@ -74,6 +75,7 @@ public class BorrowDomainServiceImpl implements BorrowDomainService {
 
 
 
+    // TODO ova zoshto pak ???
     @Override
     public BorrowedBook borrowBook(Long userId, Long bookCopyId, LocalDate borrowDate, LocalDate dueDate) {
         return null;

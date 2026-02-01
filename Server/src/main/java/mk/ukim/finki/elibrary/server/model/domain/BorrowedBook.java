@@ -2,11 +2,13 @@ package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class BorrowedBook {
 
     @Id
@@ -36,46 +38,6 @@ public class BorrowedBook {
         this.borrowedAt = borrowedAt;
         this.dueDate = dueDate;
         this.user = user;
-        this.bookCopy = bookCopy;
-    }
-
-    public BorrowedBook() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getBorrowedAt() {
-        return borrowedAt;
-    }
-
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
-
-    public UserWrapper getUser() {
-        return user;
-    }
-
-    public BookCopy getBookCopy() {
-        return bookCopy;
-    }
-
-    public void setBorrowedAt(LocalDateTime borrowedAt) {
-        this.borrowedAt = borrowedAt;
-    }
-
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public void setUser(UserWrapper user) {
-        this.user = user;
-    }
-
-    public void setBookCopy(BookCopy bookCopy) {
         this.bookCopy = bookCopy;
     }
 }
