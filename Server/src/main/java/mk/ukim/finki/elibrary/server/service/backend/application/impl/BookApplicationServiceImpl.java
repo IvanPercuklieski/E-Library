@@ -19,13 +19,13 @@ import java.util.List;
 
 @Service
 @Transactional
-public class BookAplicationServiceImpl implements BookApplicationService {
+public class BookApplicationServiceImpl implements BookApplicationService {
 
     private final BookDomainService bookDomainService;
     private final ReviewApplicationService reviewApplicationService;
     private final ReviewDomainService reviewDomainService;
 
-    public BookAplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService) {
+    public BookApplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService) {
         this.bookDomainService = bookDomainService;
         this.reviewApplicationService = reviewApplicationService;
         this.reviewDomainService = reviewDomainService;

@@ -20,10 +20,10 @@ public class Genre {
 
     public Genre(Long id, String name) {
         this.id = id;
-        this.name = name;
+        this.name = name.trim().toUpperCase();
     }
 
     public Genre(String name) {
-        this.name = name;
+        this.name = name.trim().toUpperCase();
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -48,6 +49,7 @@ public class BaseBook {
         this.pubDate = pubDate;
         this.description = description;
         this.numBooks = numBooks;
+        this.copies = new ArrayList<>();
     }
 
     public BaseBook(Long id, String title, Author author, List<Genre> genres,
