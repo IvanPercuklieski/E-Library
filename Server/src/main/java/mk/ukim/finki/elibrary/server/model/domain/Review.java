@@ -2,9 +2,12 @@ package mk.ukim.finki.elibrary.server.model.domain;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 public class Review {
 
     @Id
@@ -36,18 +39,4 @@ public class Review {
         this.rating = rating;
         this.createdAt = LocalDateTime.now();
     }
-
-
-    public Long getId() { return id; }
-    public BaseBook getBook() { return book; }
-    public UserWrapper getUser() { return user; }
-    public String getText() { return text; }
-    public int getRating() { return rating; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-
-    public void setBook(BaseBook book) { this.book = book; }
-    public void setUser(UserWrapper user) { this.user = user; }
-    public void setText(String text) { this.text = text; }
-    public void setRating(int rating) { this.rating = rating; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

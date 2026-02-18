@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class GenreNotFoundException extends RuntimeException {
-    public GenreNotFoundException(Long id) {
-        super(String.format("Genre with the id= %d is not found", id));
+public class GenreNameNotFoundException extends RuntimeException {
+    public GenreNameNotFoundException(String genreName) {
+        super(String.format("The gere with name= %s is not found", genreName));
     }
 }

@@ -8,7 +8,7 @@ public record CreateUserWrapperDto(String name,
                                    String surname,
                                    LocalDate fromDate,
                                    LocalDate dueDate,
-                                   boolean zachlenet) {
+                                   boolean isMember) {
 
 
     public UserWrapper toUserWrapper() {
@@ -17,7 +17,7 @@ public record CreateUserWrapperDto(String name,
         user.setSurname(this.surname);
         user.setFromDate(this.fromDate);
         user.setDueDate(this.dueDate);
-        user.setZachlenet(this.zachlenet);
+        user.setMember(this.isMember);
         return user;
     }
 }

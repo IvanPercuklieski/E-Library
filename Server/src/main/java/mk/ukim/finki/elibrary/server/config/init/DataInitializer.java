@@ -442,7 +442,7 @@ public class DataInitializer {
         UserWrapper user2 = users.get(1);
 
         Employee employee1 = new Employee(user1, "admin", "admin123", "admin@mail.com", EmployeeType.ADMIN);
-        Employee employee2 = new Employee(user2, "obichen", "ob123", "obichen@mail.com", EmployeeType.OBICHEN);
+        Employee employee2 = new Employee(user2, "basic", "basic123", "basic@mail.com", EmployeeType.BASIC);
 
         employeeRepository.saveAll(List.of(employee1, employee2));
         System.out.println("[DataInitializer] Seeded employees.");
