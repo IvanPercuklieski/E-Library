@@ -7,7 +7,10 @@ import mk.ukim.finki.elibrary.server.model.domain.BaseBook;
 import mk.ukim.finki.elibrary.server.model.domain.Genre;
 import java.util.stream.Collectors;
 
-public record CreateBaseBookDto(String title, Long authorId, List<Long> genreIds, LocalDate pubDate,
+public record CreateBaseBookDto(String title,
+                                Long authorId,
+                                List<Long> genreIds,
+                                LocalDate pubDate,
                                 String description,
                                 int numBooks) {
 
