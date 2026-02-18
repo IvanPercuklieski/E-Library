@@ -3,6 +3,7 @@ package mk.ukim.finki.elibrary.server.model.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class Author {
     private List<BaseBook> books;
 
     public Author(String name){
-        this.name = name;
+        this.name = capitalizeAuthorNameCase(name);
+    }
+
+    public static String capitalizeAuthorNameCase(String authorName) {
+        return WordUtils.capitalizeFully(authorName, ' ', '.', '-');
     }
 }
