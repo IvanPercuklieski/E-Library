@@ -11,7 +11,7 @@ public record DisplayUserWrapperDto(Long id,
                                     String surname,
                                     LocalDate fromDate,
                                     LocalDate dueDate,
-                                    boolean zachlenet,
+                                    boolean isMember,
                                     List<String> borrowedBookTitles) {
 
     public static DisplayUserWrapperDto from(UserWrapper user) {
@@ -27,7 +27,7 @@ public record DisplayUserWrapperDto(Long id,
                 user.getSurname(),
                 user.getFromDate(),
                 user.getDueDate(),
-                user.isZachlenet(),
+                user.isMember(),
                 borrowedTitles
         );
     }

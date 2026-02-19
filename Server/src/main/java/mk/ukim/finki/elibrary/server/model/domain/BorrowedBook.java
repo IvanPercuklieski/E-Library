@@ -37,5 +37,4 @@ public class BorrowedBook {
         this.user = user;
         this.bookCopy = bookCopy;
     }
-
 }

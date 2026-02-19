@@ -2,11 +2,13 @@ package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Author {
 
     @Id
@@ -21,29 +23,4 @@ public class Author {
     public Author(String name){
         this.name = name;
     }
-
-    public Author() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<BaseBook> getBooks() {
-        return books;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setBooks(List<BaseBook> books) {
-        this.books = books;
-    }
-
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,7 @@ public class BaseBook {
     @Column
     private LocalDate pubDate;
 
-    @Column(length = 1000)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column
@@ -53,5 +54,6 @@ public class BaseBook {
         this.pubDate = pubDate;
         this.description = description;
         this.numBooks = numBooks;
+        this.copies = new ArrayList<>();
     }
 }

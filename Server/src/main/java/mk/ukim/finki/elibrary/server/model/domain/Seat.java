@@ -33,5 +33,4 @@ public class Seat {
         this.user = user;
         this.room = room;
     }
-
 }
