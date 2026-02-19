@@ -1,13 +1,11 @@
 package mk.ukim.finki.elibrary.server.dto.display;
 
-import mk.ukim.finki.elibrary.server.dto.DisplayBookBaseDto;
 import mk.ukim.finki.elibrary.server.model.domain.BaseBook;
 import mk.ukim.finki.elibrary.server.model.domain.Genre;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public record DisplayBaseBookDto(
         Long id,

@@ -3,9 +3,9 @@ package mk.ukim.finki.elibrary.server.service.backend.application.impl;
 import jakarta.transaction.Transactional;
 
 import mk.ukim.finki.elibrary.server.dto.BookDetailsDto;
-import mk.ukim.finki.elibrary.server.dto.CreateBaseBookDto;
-import mk.ukim.finki.elibrary.server.dto.DisplayBookBaseDto;
+import mk.ukim.finki.elibrary.server.dto.display.DisplayBookBaseDto;
 import mk.ukim.finki.elibrary.server.dto.ReviewDisplayDto;
+import mk.ukim.finki.elibrary.server.dto.create.CreateBaseBookDto;
 import mk.ukim.finki.elibrary.server.dto.display.DisplayBaseBookDto;
 import mk.ukim.finki.elibrary.server.dto.update.UpdateBaseBookDto;
 import mk.ukim.finki.elibrary.server.model.domain.*;
@@ -14,12 +14,10 @@ import mk.ukim.finki.elibrary.server.repository.AuthorRepository;
 import mk.ukim.finki.elibrary.server.repository.GenreRepository;
 import mk.ukim.finki.elibrary.server.service.backend.application.BookApplicationService;
 import mk.ukim.finki.elibrary.server.service.backend.application.ReviewApplicationService;
-import mk.ukim.finki.elibrary.server.service.domain.BookCopyDomainService;
 import mk.ukim.finki.elibrary.server.service.domain.BookDomainService;
 import mk.ukim.finki.elibrary.server.service.domain.ReviewDomainService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

@@ -2,9 +2,9 @@ package mk.ukim.finki.elibrary.server.service.backend.application;
 
 
 import mk.ukim.finki.elibrary.server.dto.BookDetailsDto;
-import mk.ukim.finki.elibrary.server.dto.CreateBaseBookDto;
-import mk.ukim.finki.elibrary.server.dto.DisplayBookBaseDto;
+import mk.ukim.finki.elibrary.server.dto.display.DisplayBookBaseDto;
 import mk.ukim.finki.elibrary.server.dto.ReviewDisplayDto;
+import mk.ukim.finki.elibrary.server.dto.create.CreateBaseBookDto;
 import mk.ukim.finki.elibrary.server.dto.display.DisplayBaseBookDto;
 import mk.ukim.finki.elibrary.server.dto.update.UpdateBaseBookDto;
 import mk.ukim.finki.elibrary.server.model.domain.BaseBook;
