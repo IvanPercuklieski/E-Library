@@ -6,11 +6,12 @@ import mk.ukim.finki.elibrary.server.model.domain.*;
 import mk.ukim.finki.elibrary.server.model.exceptions.*;
 import mk.ukim.finki.elibrary.server.repository.*;
 import mk.ukim.finki.elibrary.server.service.domain.BookDomainService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -56,21 +57,55 @@ public class BookDomainServiceImpl implements BookDomainService {
     @Override
     public BaseBook updateBook(Long id, UpdateBaseBookDto dto) {
 
-        BaseBook book = bookRepository.findById(id).orElseThrow(()->new BookNotFoundException(id));
-
+        BaseBook book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(id));
 
         if (dto.title() != null) book.setTitle(dto.title());
         if (dto.pubDate() != null) book.setPubDate(dto.pubDate());
         if (dto.description() != null) book.setDescription(dto.description());
-        book.setNumBooks(dto.requestedTotalCopies());
 
+        int counter = dto.requestedTotalCopies() == 0 ? 0 : dto.requestedTotalCopies();
+
+        if (counter != 0) {
+            int newTotal = book.getNumBooks() + counter;
+            if (newTotal < 0) {
+                throw new IllegalArgumentException("Total copies cannot go below 0");
+            }
+
+            if (counter > 0) {
+                List<BookCopy> newCopies = new ArrayList<>(counter);
+                for (int i = 0; i < counter; i++) {
+                    newCopies.add(new BookCopy(book));
+                }
+                bookCopyRepository.saveAll(newCopies);
+            } else {
+                int toDelete = -counter;
+                Pageable limit = PageRequest.of(0, toDelete);
+
+                List<BookCopy> freeCopies = bookCopyRepository.findAvailableCopiesForBaseBook(
+                        book.getId(),
+                        limit
+                );
+
+                if (freeCopies.size() < toDelete) {
+                    throw new IllegalStateException(
+                            "Not enough available copies to delete. Need " + toDelete +
+                                    ", but only " + freeCopies.size() + " are free."
+                    );
+                }
+
+                List<BookCopy> toRemove = freeCopies.subList(0, toDelete);
+                bookCopyRepository.deleteAll(toRemove);
+            }
+
+            book.setNumBooks(newTotal);
+        }
 
         if (dto.authorId() != null) {
             Author author = authorRepository.findById(dto.authorId())
                     .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
             book.setAuthor(author);
         }
-
 
         if (dto.genreIds() != null) {
             List<Genre> genres = dto.genreIds().isEmpty()

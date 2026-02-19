@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 @Repository
@@ -18,13 +20,16 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
     long countByBaseBookId(Long baseBookId);
 
     @Query("""
-        select c from BookCopy c
-        where c.baseBook.id = :baseBookId
-          and c.id not in (
-              select bb.bookCopy.id from BorrowedBook bb
-              where bb.bookCopy.baseBook.id = :baseBookId
-          )
-        order by c.id asc
-    """)
-    List<BookCopy> findAvailableCopiesForBaseBook(@Param("baseBookId") Long baseBookId);
+    select c from BookCopy c
+    where c.baseBook.id = :baseBookId
+      and c.id not in (
+          select bb.bookCopy.id from BorrowedBook bb
+          where bb.bookCopy.baseBook.id = :baseBookId
+      )
+    order by c.id asc
+""")
+    List<BookCopy> findAvailableCopiesForBaseBook(
+            @Param("baseBookId") Long baseBookId,
+            Pageable pageable
+    );
 }

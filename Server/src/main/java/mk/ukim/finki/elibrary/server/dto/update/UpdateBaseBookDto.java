@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record UpdateBaseBookDto(
-        Long id,
+
         String title,
         Long authorId,
         List<Long> genreIds,
