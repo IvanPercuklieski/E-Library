@@ -31,7 +31,7 @@ public class UserWrapper {
     private LocalDate dueDate;
 
     @Column
-    private boolean zachlenet;
+    private boolean isMember;
 
     @Column
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -42,5 +42,7 @@ public class UserWrapper {
 
     public UserWrapper(String filip, String jovanovski, LocalDate localDate, LocalDate localDate1, boolean b, String mail) {
     }
+
+
 }
 

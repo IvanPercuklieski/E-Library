@@ -31,7 +31,7 @@ public class BookApplicationServiceImpl implements BookApplicationService {
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
 
-    public BookAplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService, AuthorRepository authorRepository, GenreRepository genreRepository) {
+    public BookApplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService, AuthorRepository authorRepository, GenreRepository genreRepository) {
         this.bookDomainService = bookDomainService;
         this.reviewApplicationService = reviewApplicationService;
         this.reviewDomainService = reviewDomainService;
