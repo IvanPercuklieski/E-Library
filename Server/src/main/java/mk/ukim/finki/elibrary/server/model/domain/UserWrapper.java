@@ -1,23 +1,27 @@
 package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "user_wrapper")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserWrapper {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @Column
     private String name;
 
+    @Column
     private String surname;
 
     @Column(columnDefinition = "DATE")
@@ -26,92 +30,17 @@ public class UserWrapper {
     @Column(columnDefinition = "DATE")
     private LocalDate dueDate;
 
+    @Column
     private boolean zachlenet;
 
-    @OneToMany(mappedBy = "user")
+    @Column
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BorrowedBook> borrowedBooks;
 
+    @Column
     private String email;
 
-    public UserWrapper(Long id, String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean zachlenet,String email ,List<BorrowedBook> borrowedBooks) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.fromDate = fromDate;
-        this.dueDate = dueDate;
-        this.zachlenet = zachlenet;
-        this.borrowedBooks = borrowedBooks;
-        this.email=email;
-    }
-
-    public UserWrapper(String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean zachlenet, String email) {
-        this.name = name;
-        this.surname = surname;
-        this.fromDate = fromDate;
-        this.dueDate = dueDate;
-        this.zachlenet = zachlenet;
-        this.email=email;
-
-    }
-
-    public UserWrapper() {
-
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public LocalDate getFromDate() {
-        return fromDate;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
-    public boolean isZachlenet() {
-        return zachlenet;
-    }
-
-    public List<BorrowedBook> getBorrowedBooks() {
-        return borrowedBooks;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public void setFromDate(LocalDate fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public void setZachlenet(boolean zachlenet) {
-        this.zachlenet = zachlenet;
-    }
-
-    public void setBorrowedBooks(List<BorrowedBook> borrowedBooks) {
-        this.borrowedBooks = borrowedBooks;
+    public UserWrapper(String filip, String jovanovski, LocalDate localDate, LocalDate localDate1, boolean b, String mail) {
     }
 }
 

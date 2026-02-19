@@ -117,140 +117,29 @@ public class DataInitializer {
     }
 
     private void seedUsers() {
-        if (userWrapperRepository.count() > 0) return;
 
-        List<UserWrapper> users = new ArrayList<>();
 
-        users.add(new UserWrapper(
-                "Milena", "Milenovska",
-                LocalDate.now(),
-                LocalDate.now().plusDays(14),
-                true,
-                "milena.milenovska@example.com"
-        ));
+        ensureUser("Milena", "Milenovska", "milena.milenovska@example.com", true, 14);
+        ensureUser("Marko", "Markovski", "marko.markovski@example.com", false, 7);
+        ensureUser("Marija", "Gashoska", "marija.gashoska.1@students.finki.ukim.mk", true, 365);
 
-        users.add(new UserWrapper(
-                "Marko", "Markovski",
-                LocalDate.now(),
-                LocalDate.now().plusDays(7),
-                false,
-                "marko.markovski@example.com"
-        ));
+        ensureUser("Elena", "Trajkovska", "elena.trajkovska@example.com", true, 300);
+        ensureUser("Stefan", "Iliev", "stefan.iliev@example.com", true, 270);
+        ensureUser("Ivan", "Georgiev", "ivan.georgiev@example.com", true, 240);
+        ensureUser("Sara", "Nikolova", "sara.nikolova@example.com", true, 210);
+        ensureUser("Nikola", "Arsov", "nikola.arsov@example.com", true, 180);
+        ensureUser("Teodora", "Bojkovska", "teodora.bojkovska@example.com", true, 365);
+        ensureUser("Viktor", "Kitanov", "viktor.kitanov@example.com", true, 365);
+        ensureUser("Jana", "Aleksova", "jana.aleksova@example.com", true, 365);
+        ensureUser("Filip", "Jovanovski", "filip.jovanovski@s.com", true, 365);
+        ensureUser("Maja", "Dimitrova", "maja.dimitrova@example.com", true, 365);
+        ensureUser("Bojan", "Ristov", "bojan.ristov@example.com", true, 365);
+        ensureUser("Andrej", "Mitrevski", "andrej.mitrevski@example.com", true, 365);
+        ensureUser("Kristina", "Popova", "kristina.popova@example.com", true, 365);
 
-        users.add(new UserWrapper(
-                "Elena", "Trajkovska",
-                LocalDate.now().minusDays(30),
-                LocalDate.now().plusDays(300),
-                true,
-                "elena.trajkovska@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Stefan", "Iliev",
-                LocalDate.now().minusDays(25),
-                LocalDate.now().plusDays(270),
-                true,
-                "stefan.iliev@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Ivan", "Georgiev",
-                LocalDate.now().minusDays(20),
-                LocalDate.now().plusDays(240),
-                true,
-                "ivan.georgiev@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Sara", "Nikolova",
-                LocalDate.now().minusDays(15),
-                LocalDate.now().plusDays(210),
-                true,
-                "sara.nikolova@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Nikola", "Arsov",
-                LocalDate.now().minusDays(10),
-                LocalDate.now().plusDays(180),
-                true,
-                "nikola.arsov@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Teodora", "Bojkovska",
-                LocalDate.now().minusDays(40),
-                LocalDate.now().plusDays(365),
-                true,
-                "teodora.bojkovska@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Viktor", "Kitanov",
-                LocalDate.now().minusDays(50),
-                LocalDate.now().plusDays(365),
-                true,
-                "viktor.kitanov@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Jana", "Aleksova",
-                LocalDate.now().minusDays(60),
-                LocalDate.now().plusDays(365),
-                true,
-                "jana.aleksova@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Filip", "Jovanovski",
-                LocalDate.now().minusDays(5),
-                LocalDate.now().plusDays(365),
-                true,
-                "filip.jovanovski@s.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Maja", "Dimitrova",
-                LocalDate.now().minusDays(12),
-                LocalDate.now().plusDays(365),
-                true,
-                "maja.dimitrova@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Bojan", "Ristov",
-                LocalDate.now().minusDays(18),
-                LocalDate.now().plusDays(365),
-                true,
-                "bojan.ristov@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Andrej", "Mitrevski",
-                LocalDate.now().minusDays(22),
-                LocalDate.now().plusDays(365),
-                true,
-                "andrej.mitrevski@example.com"
-        ));
-
-        users.add(new UserWrapper(
-                "Kristina", "Popova",
-                LocalDate.now().minusDays(27),
-                LocalDate.now().plusDays(365),
-                true,
-                "kristina.popova@example.com"
-        ));
-        users.add(new UserWrapper(
-                "Marija", "Gashoska",
-                LocalDate.now().minusDays(27),
-                LocalDate.now().plusDays(365),
-                true,
-                "marija.gashoska.1@students.finki.ukim.mk"
-        ));
-
-        userWrapperRepository.saveAll(users);
-        System.out.println("[DataInitializer] Seeded users: " + users.size());
+        System.out.println("[DataInitializer] Ensured users exist.");
     }
+
 
     private void seedBaseBooksAndCopies() {
         if (baseBookRepository.count() > 0 || bookCopyRepository.count() > 0) return;
@@ -441,8 +330,9 @@ public class DataInitializer {
         UserWrapper user1 = users.get(0);
         UserWrapper user2 = users.get(1);
 
-        Employee employee1 = new Employee(user1, "admin", "admin123", "admin@mail.com", EmployeeType.ADMIN);
-        Employee employee2 = new Employee(user2, "obichen", "ob123", "obichen@mail.com", EmployeeType.OBICHEN);
+        Employee employee1 = new Employee( "admin", "admin123", "admin@mail.com", EmployeeType.ADMIN);
+        employee1.setUser(user1);
+        Employee employee2 = new Employee( "obichen", "ob123", "obichen@mail.com", EmployeeType.OBICHEN);
 
         employeeRepository.saveAll(List.of(employee1, employee2));
         System.out.println("[DataInitializer] Seeded employees.");
@@ -670,9 +560,9 @@ public class DataInitializer {
             return;
         }
 
-        UserWrapper milena = findUserByEmail(users, "milena.milenovska@example.com");
-        UserWrapper marko  = findUserByEmail(users, "marko.markovski@example.com");
-        UserWrapper marija = findUserByEmail(users, "marija.gashoska.1@students.finki.ukim.mk");
+        UserWrapper milena = ensureUser("Milena", "Milenovska", "milena.milenovska@example.com", true, 14);
+        UserWrapper marko  = ensureUser("Marko", "Markovski", "marko.markovski@example.com", false, 7);
+        UserWrapper marija = ensureUser("Marija", "Gashoska", "marija.gashoska.1@students.finki.ukim.mk", true, 365);
 
 
         BaseBook hobbit       = findBookByTitle(books, "The Hobbit");
@@ -762,7 +652,8 @@ public class DataInitializer {
         return books.stream()
                 .filter(b -> title.equalsIgnoreCase(b.getTitle()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Missing book: " + title));
+               .orElseThrow(() -> new IllegalStateException("Missing book: " + title));
+
     }
 
     private BookCopy findAnyCopyForBook(List<BookCopy> copies, BaseBook book) {
@@ -791,5 +682,41 @@ public class DataInitializer {
         log.setNotes("SMALL seed log for ML testing");
         return log;
     }
+
+
+    private UserWrapper ensureUser(String firstName,
+                                   String lastName,
+                                   String email,
+                                   boolean active,
+                                   int membershipDays) {
+
+        // 1) try find existing by email (in DB)
+        UserWrapper existing = userWrapperRepository.findAll().stream()
+                .filter(u -> u.getEmail() != null && u.getEmail().trim().equalsIgnoreCase(email.trim()))
+                .findFirst()
+                .orElse(null);
+
+        if (existing != null) {
+            // normalize email just in case it has spaces
+            if (!existing.getEmail().equals(existing.getEmail().trim())) {
+                existing.setEmail(existing.getEmail().trim());
+                userWrapperRepository.save(existing);
+            }
+            return existing;
+        }
+
+        // 2) create if missing
+        UserWrapper u = new UserWrapper(
+                firstName,
+                lastName,
+                LocalDate.now(),
+                LocalDate.now().plusDays(membershipDays),
+                active,
+                email.trim()
+        );
+
+        return userWrapperRepository.save(u);
+    }
+
 
 }

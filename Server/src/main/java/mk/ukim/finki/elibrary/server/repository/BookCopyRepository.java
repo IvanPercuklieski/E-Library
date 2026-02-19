@@ -14,4 +14,17 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
     @Query("SELECT bc FROM BookCopy bc WHERE bc.baseBook.id = :bookId " +
             "AND bc.id NOT IN (SELECT bb.bookCopy.id FROM BorrowedBook bb)")
     List<BookCopy> findAvailableBookCopies(@Param("bookId") Long bookId);
+
+    long countByBaseBookId(Long baseBookId);
+
+    @Query("""
+        select c from BookCopy c
+        where c.baseBook.id = :baseBookId
+          and c.id not in (
+              select bb.bookCopy.id from BorrowedBook bb
+              where bb.bookCopy.baseBook.id = :baseBookId
+          )
+        order by c.id asc
+    """)
+    List<BookCopy> findAvailableCopiesForBaseBook(@Param("baseBookId") Long baseBookId);
 }

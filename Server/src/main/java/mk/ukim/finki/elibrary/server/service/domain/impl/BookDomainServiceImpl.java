@@ -1,6 +1,7 @@
 package mk.ukim.finki.elibrary.server.service.domain.impl;
 
 import jakarta.transaction.Transactional;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateBaseBookDto;
 import mk.ukim.finki.elibrary.server.model.domain.*;
 import mk.ukim.finki.elibrary.server.model.exceptions.*;
 import mk.ukim.finki.elibrary.server.repository.*;
@@ -35,7 +36,7 @@ public class BookDomainServiceImpl implements BookDomainService {
                                  AuthorRepository authorRepository,
                                  GenreRepository genreRepository,
                                  ReviewRepository reviewRepository
-                               ) {
+                                ){
         this.bookRepository = bookRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.borrowedBookRepository = borrowedBookRepository;
@@ -53,10 +54,31 @@ public class BookDomainServiceImpl implements BookDomainService {
     }
 
     @Override
-    public BaseBook updateBook(BaseBook book) {
-        if (!bookRepository.existsById(book.getId())) {
-            throw new BookNotFoundException(book.getId());
+    public BaseBook updateBook(Long id, UpdateBaseBookDto dto) {
+
+        BaseBook book = bookRepository.findById(id).orElseThrow(()->new BookNotFoundException(id));
+
+
+        if (dto.title() != null) book.setTitle(dto.title());
+        if (dto.pubDate() != null) book.setPubDate(dto.pubDate());
+        if (dto.description() != null) book.setDescription(dto.description());
+        book.setNumBooks(dto.requestedTotalCopies());
+
+
+        if (dto.authorId() != null) {
+            Author author = authorRepository.findById(dto.authorId())
+                    .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
+            book.setAuthor(author);
         }
+
+
+        if (dto.genreIds() != null) {
+            List<Genre> genres = dto.genreIds().isEmpty()
+                    ? List.of()
+                    : genreRepository.findAllById(dto.genreIds());
+            book.setGenres(genres);
+        }
+
         return bookRepository.save(book);
     }
 
@@ -134,9 +156,9 @@ public class BookDomainServiceImpl implements BookDomainService {
 
     @Override
     public List<BaseBook> searchBooks(String title, Long authorId, List<Long> genreIds) {
-        Author author = (authorId != null) ? authorRepository.findById(authorId).orElse(null) : null;
-        List<Genre> genres = (genreIds != null && !genreIds.isEmpty()) ? genreRepository.findAllById(genreIds) : null;
-        return bookRepository.searchBooks(title, author, genres);
+//        Author author = (authorId != null) ? authorRepository.findById(authorId).orElse(null) : null;
+//        List<Genre> genres = (genreIds != null && !genreIds.isEmpty()) ? genreRepository.findAllById(genreIds) : null;
+        return bookRepository.searchBooks(title, authorId, genreIds);
     }
 
     @Override
@@ -192,5 +214,14 @@ public class BookDomainServiceImpl implements BookDomainService {
         reviewRepository.save(review);
     }
 
+    @Override
+    public long countTotalCopies(Long bookId) {
+        return bookCopyRepository.countByBaseBookId(bookId);
+    }
+
+    @Override
+    public long countActiveBorrowings(Long bookId) {
+        return borrowedBookRepository.countActiveBorrowingsByBaseBookId(bookId);
+    }
 
 }

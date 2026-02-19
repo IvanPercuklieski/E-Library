@@ -1,43 +1,27 @@
 package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 
-@Data
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "bookcopies")
 public class BookCopy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "base_book_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "base_book_id", nullable = false)
     private BaseBook baseBook;
 
-    public BookCopy(Long id, BaseBook baseBook) {
-        this.id = id;
-        this.baseBook = baseBook;
+    public BookCopy(BaseBook b) {
+        this.baseBook = b;
     }
 
-    public BookCopy(BaseBook baseBook) {
-        this.baseBook = baseBook;
-    }
-
-    public BookCopy() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public BaseBook getBaseBook() {
-        return baseBook;
-    }
-
-    public void setBaseBook(BaseBook baseBook) {
-        this.baseBook = baseBook;
-    }
 }

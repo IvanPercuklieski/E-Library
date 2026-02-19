@@ -3,17 +3,22 @@ package mk.ukim.finki.elibrary.server.service.backend.application.impl;
 import jakarta.transaction.Transactional;
 
 import mk.ukim.finki.elibrary.server.dto.BookDetailsDto;
+import mk.ukim.finki.elibrary.server.dto.CreateBaseBookDto;
+import mk.ukim.finki.elibrary.server.dto.DisplayBookBaseDto;
 import mk.ukim.finki.elibrary.server.dto.ReviewDisplayDto;
-import mk.ukim.finki.elibrary.server.model.domain.BaseBook;
-import mk.ukim.finki.elibrary.server.model.domain.BookCopy;
-import mk.ukim.finki.elibrary.server.model.domain.Genre;
-import mk.ukim.finki.elibrary.server.model.domain.Review;
+import mk.ukim.finki.elibrary.server.dto.display.DisplayBaseBookDto;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateBaseBookDto;
+import mk.ukim.finki.elibrary.server.model.domain.*;
+import mk.ukim.finki.elibrary.server.model.exceptions.AuthorNotFoundException;
+import mk.ukim.finki.elibrary.server.repository.AuthorRepository;
+import mk.ukim.finki.elibrary.server.repository.GenreRepository;
 import mk.ukim.finki.elibrary.server.service.backend.application.BookApplicationService;
 import mk.ukim.finki.elibrary.server.service.backend.application.ReviewApplicationService;
 import mk.ukim.finki.elibrary.server.service.domain.BookDomainService;
 import mk.ukim.finki.elibrary.server.service.domain.ReviewDomainService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,21 +29,45 @@ public class BookAplicationServiceImpl implements BookApplicationService {
     private final BookDomainService bookDomainService;
     private final ReviewApplicationService reviewApplicationService;
     private final ReviewDomainService reviewDomainService;
-
-    public BookAplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService) {
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
+    public BookAplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService, AuthorRepository authorRepository, GenreRepository genreRepository) {
         this.bookDomainService = bookDomainService;
         this.reviewApplicationService = reviewApplicationService;
         this.reviewDomainService = reviewDomainService;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Override
-    public BaseBook createBook(BaseBook book) {
-        return bookDomainService.createBook(book);
-    }
+    public DisplayBookBaseDto createBook(CreateBaseBookDto dto) {
 
+        Author author = authorRepository.findById(dto.authorId())
+                .orElseThrow(() -> new AuthorNotFoundException(dto.authorId()));
+
+        List<Genre> genres = (dto.genreIds() == null || dto.genreIds().isEmpty())
+                ? List.of()
+                : genreRepository.findAllById(dto.genreIds());
+
+        BaseBook book = new BaseBook(
+                dto.title(),
+                author,
+                genres,
+                dto.pubDate(),
+                dto.description(),
+                dto.numBooks()
+        );
+
+        return DisplayBookBaseDto.from(bookDomainService.createBook(book));
+    }
+   //bookDomainService.updateBook(book);
     @Override
-    public BaseBook updateBook(BaseBook book) {
-        return bookDomainService.updateBook(book);
+    public DisplayBaseBookDto updateBook(Long bookId, UpdateBaseBookDto book) {
+        BaseBook saved=bookDomainService.updateBook(bookId,book);
+        long total = bookDomainService.countTotalCopies(saved.getId());
+        long active = bookDomainService.countActiveBorrowings(saved.getId());
+        long available = total - active;
+        return DisplayBaseBookDto.from(saved,total,available,active);
     }
 
     @Override
@@ -47,18 +76,39 @@ public class BookAplicationServiceImpl implements BookApplicationService {
     }
 
     @Override
-    public BaseBook getBookById(Long bookId) {
-        return bookDomainService.getBookById(bookId);
+    public DisplayBaseBookDto getBookById(Long bookId) {
+
+        long total = bookDomainService.countTotalCopies(bookId);
+        long active = bookDomainService.countActiveBorrowings(bookId);
+        return DisplayBaseBookDto.from(bookDomainService.getBookById(bookId),total,total-active,active);
+
     }
 
     @Override
-    public List<BaseBook> getAllBooks() {
-        return bookDomainService.getAllBooks();
+    public List<DisplayBaseBookDto> getAllBooks() {
+        List<BaseBook> books = bookDomainService.getAllBooks();
+
+        return DisplayBaseBookDto.from(books, bookId -> {
+            long total = bookDomainService.countTotalCopies(bookId);
+            long active = bookDomainService.countActiveBorrowings(bookId);
+            long available = total - active;
+            return new DisplayBaseBookDto.Counters(total, available, active);
+        });
     }
 
+
     @Override
-    public List<BaseBook> searchBooks(String title, Long authorId, List<Long> genreIds) {
-        return bookDomainService.searchBooks(title, authorId, genreIds);
+    public List<DisplayBaseBookDto> searchBooks(String title, Long authorId, List<Long> genreIds) {
+        List<BaseBook> books = bookDomainService.searchBooks(title, authorId, genreIds);
+
+        return books.stream()
+                .map(b -> {
+                    long total = bookDomainService.countTotalCopies(b.getId());
+                    long active = bookDomainService.countActiveBorrowings(b.getId());
+                    long available = total - active;
+                    return DisplayBaseBookDto.from(b, total, available, active);
+                })
+                .toList();
     }
 
     @Override
