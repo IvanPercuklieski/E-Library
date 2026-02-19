@@ -1,14 +1,14 @@
 package mk.ukim.finki.elibrary.server.service.backend.application.impl;
 
-import mk.ukim.finki.elibrary.server.dto.CreateGenreDto;
-import mk.ukim.finki.elibrary.server.dto.DisplayGenreDto;
+import mk.ukim.finki.elibrary.server.dto.create.CreateGenreDto;
+import mk.ukim.finki.elibrary.server.dto.display.DisplayGenreDto;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateGenreDto;
+import mk.ukim.finki.elibrary.server.model.domain.Genre;
 import mk.ukim.finki.elibrary.server.service.backend.application.GenreApplicationService;
 import mk.ukim.finki.elibrary.server.service.domain.GenreDomainService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 public class GenreApplicationServiceImpl implements GenreApplicationService {
@@ -21,24 +21,29 @@ public class GenreApplicationServiceImpl implements GenreApplicationService {
 
     @Override
     public List<DisplayGenreDto> getAllGenres() {
-        return genreDomainService.getAllGenres()
-                .stream().map(DisplayGenreDto::from).toList();
+        return DisplayGenreDto.from(genreDomainService.getAllGenres());
     }
 
     @Override
-    public Optional<DisplayGenreDto> addGenre(CreateGenreDto genreDto) {
-        return genreDomainService.addGenre(genreDto.toGenre())
-                .map(DisplayGenreDto::from);
+    public DisplayGenreDto getGenreById(Long id) {
+        return DisplayGenreDto.from(genreDomainService.getGenreById(id));
     }
 
     @Override
-    public Optional<DisplayGenreDto> deleteGenreById(Long genreId) {
-        return genreDomainService.deleteGenreById(genreId).map(DisplayGenreDto::from);
+    public DisplayGenreDto createGenre(CreateGenreDto genre) {
+        Genre genre1=new Genre();
+        genre1.setName(genre.title());
+        return DisplayGenreDto.from(genreDomainService.createGenre(genre1));
     }
 
     @Override
-    public Optional<DisplayGenreDto> deleteGenreByName(String genreName) {
-        return genreDomainService.deleteGenreByName(genreName.trim().toUpperCase())
-                .map(DisplayGenreDto::from);
+    public DisplayGenreDto updateGenre(Long genreId, UpdateGenreDto dto) {
+       return DisplayGenreDto.from(genreDomainService.updateGenre(genreId,dto));
+
+    }
+
+    @Override
+    public void deleteGenre(Long genreId) {
+    genreDomainService.deleteGenre(genreId);
     }
 }

@@ -1,6 +1,7 @@
 package mk.ukim.finki.elibrary.server.service.domain;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateBaseBookDto;
 import mk.ukim.finki.elibrary.server.model.domain.*;
 
 import java.awt.print.Book;
@@ -12,7 +13,7 @@ public interface BookDomainService {
 
         BaseBook createBook(BaseBook book);
 
-        BaseBook updateBook(BaseBook book);
+        BaseBook updateBook(Long bookId,UpdateBaseBookDto book);
 
         void deleteBook(Long bookId);
 
@@ -43,6 +44,7 @@ public interface BookDomainService {
         List<BaseBook> getBooksByGenre(Long genreId);
 
         void addReview(Long bookId, Long userId, String text, int rating);
-
+        long countTotalCopies(Long bookId);
+        long countActiveBorrowings(Long bookId);
 
 }

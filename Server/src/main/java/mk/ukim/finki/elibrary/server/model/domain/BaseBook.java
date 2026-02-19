@@ -1,29 +1,32 @@
 package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "books")
 public class BaseBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id")
     private Author author;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "book_genres",
             joinColumns = @JoinColumn(name = "book_id"),
@@ -31,14 +34,16 @@ public class BaseBook {
     )
     private List<Genre> genres;
 
+    @Column
     private LocalDate pubDate;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column
     private int numBooks;
 
-    @OneToMany(mappedBy = "baseBook")
+    @OneToMany(mappedBy = "baseBook", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookCopy> copies;
 
     public BaseBook(String title, Author author, List<Genre> genres,
@@ -50,17 +55,5 @@ public class BaseBook {
         this.description = description;
         this.numBooks = numBooks;
         this.copies = new ArrayList<>();
-    }
-
-    public BaseBook(Long id, String title, Author author, List<Genre> genres,
-                    LocalDate pubDate, String description, int numBooks, List<BookCopy> copies) {
-        this.id = id;
-        this.title = title;
-        this.author = author;
-        this.genres = genres;
-        this.pubDate = pubDate;
-        this.description = description;
-        this.numBooks = numBooks;
-        this.copies = copies;
     }
 }

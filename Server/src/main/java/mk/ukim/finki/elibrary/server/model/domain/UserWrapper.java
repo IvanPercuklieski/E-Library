@@ -1,15 +1,16 @@
 package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "user_wrapper")
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class UserWrapper {
 
@@ -17,9 +18,10 @@ public class UserWrapper {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
+    @Column
     private String name;
 
+    @Column
     private String surname;
 
     @Column(columnDefinition = "DATE")
@@ -28,32 +30,19 @@ public class UserWrapper {
     @Column(columnDefinition = "DATE")
     private LocalDate dueDate;
 
+    @Column
     private boolean isMember;
 
-    @OneToMany(mappedBy = "user")
+    @Column
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BorrowedBook> borrowedBooks;
 
+    @Column
     private String email;
 
-    public UserWrapper(Long id, String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean isMember,String email ,List<BorrowedBook> borrowedBooks) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.fromDate = fromDate;
-        this.dueDate = dueDate;
-        this.isMember = isMember;
-        this.borrowedBooks = borrowedBooks;
-        this.email=email;
+    public UserWrapper(String filip, String jovanovski, LocalDate localDate, LocalDate localDate1, boolean b, String mail) {
     }
 
-    public UserWrapper(String name, String surname, LocalDate fromDate, LocalDate dueDate, boolean isMember, String email) {
-        this.name = name;
-        this.surname = surname;
-        this.fromDate = fromDate;
-        this.dueDate = dueDate;
-        this.isMember = isMember;
-        this.email=email;
 
-    }
 }
 

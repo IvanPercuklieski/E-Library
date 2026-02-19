@@ -1,7 +1,7 @@
 package mk.ukim.finki.elibrary.server.web.controllers;
 
 
-import mk.ukim.finki.elibrary.server.dto.CreateBorrowedBookDto;
+import mk.ukim.finki.elibrary.server.dto.create.CreateBorrowedBookDto;
 
 import mk.ukim.finki.elibrary.server.model.domain.BorrowedBook;
 

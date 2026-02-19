@@ -1,14 +1,17 @@
 package mk.ukim.finki.elibrary.server.service.backend.application;
 
-import mk.ukim.finki.elibrary.server.dto.CreateGenreDto;
-import mk.ukim.finki.elibrary.server.dto.DisplayGenreDto;
+import mk.ukim.finki.elibrary.server.dto.create.CreateGenreDto;
+import mk.ukim.finki.elibrary.server.dto.display.DisplayGenreDto;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateGenreDto;
+import mk.ukim.finki.elibrary.server.model.domain.Genre;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface GenreApplicationService {
     List<DisplayGenreDto> getAllGenres();
-    Optional<DisplayGenreDto> addGenre(CreateGenreDto genreDto);
-    Optional<DisplayGenreDto> deleteGenreById(Long genreId);
-    Optional<DisplayGenreDto> deleteGenreByName(String genreName);
+    DisplayGenreDto getGenreById(Long id);
+    DisplayGenreDto createGenre(CreateGenreDto genre);
+    DisplayGenreDto updateGenre(Long genreId, UpdateGenreDto dto);
+    void deleteGenre(Long genreId);
+
 }

@@ -10,9 +10,9 @@ public record CreateSeatDto(int seatNumber,
                             Long roomId) {
 
 
-    public Seat toSeat(UserWrapper user, Room room) {
-        return new Seat(seatNumber, isTaken, user, room);
-    }
+//    public Seat toSeat(UserWrapper user, Room room) {
+//        return new Seat(seatNumber, isTaken, user, room);
+//    }
 
 
 }

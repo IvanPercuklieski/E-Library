@@ -52,13 +52,32 @@ public interface BaseBookRepository extends JpaRepository<BaseBook, Long> {
             @Param("genreId") Long genreId
     );
 
-    @Query("SELECT b FROM BaseBook b JOIN b.genres g WHERE " +
-            "(:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) " +
-            "AND (:author IS NULL OR b.author = :author) " +
-            "AND (:genres IS NULL OR g IN :genres)")
-    List<BaseBook> searchBooks(@Param("title") String title,
-                               @Param("author") Author author,
-                               @Param("genres") List<Genre> genres);
+//    @Query("SELECT b FROM BaseBook b JOIN b.genres g WHERE " +
+//            "(:title IS NULL OR LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%'))) " +
+//            "AND (:author IS NULL OR b.author = :author) " +
+//            "AND (:genres IS NULL OR g IN :genres)")
+//    List<BaseBook> searchBooks(@Param("title") String title,
+//                               @Param("author") Author author,
+//                               @Param("genres") List<Genre> genres);
+//
+
+    @Query("""
+select distinct b
+from BaseBook b
+left join b.genres g
+where (:title is null or lower(b.title) like lower(concat('%', :title, '%')))
+  and (:authorId is null or b.author.id = :authorId)
+  and (:genreIds is null or g.id in :genreIds)
+""")
+    List<BaseBook> searchBooks(
+            @Param("title") String title,
+            @Param("authorId") Long authorId,
+            @Param("genreIds") List<Long> genreIds
+    );
+
+
+
+
 
 
 

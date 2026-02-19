@@ -1,4 +1,4 @@
-package mk.ukim.finki.elibrary.server.dto;
+package mk.ukim.finki.elibrary.server.dto.display;
 
 import mk.ukim.finki.elibrary.server.model.domain.BorrowedBook;
 

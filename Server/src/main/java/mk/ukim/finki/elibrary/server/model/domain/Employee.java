@@ -1,40 +1,37 @@
 package mk.ukim.finki.elibrary.server.model.domain;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import mk.ukim.finki.elibrary.server.model.enumerations.EmployeeType;
 import jakarta.persistence.*;
-import lombok.Data;
 
-@Data
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "employees")
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)
     private UserWrapper user;
 
+    @Column
     private String username;
+
+    @Column
     private String password;
+
+    @Column
     private String email;
 
     @Enumerated(EnumType.STRING)
     private EmployeeType role;
 
-    public Employee(Long id, UserWrapper user, String username, String password, String email, EmployeeType role) {
-        this.id = id;
-        this.user = user;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
-
-    public Employee(UserWrapper user, String username, String password, String email, EmployeeType role) {
-        this.user = user;
+    public Employee(String username, String password, String email, EmployeeType role) {
         this.username = username;
         this.password = password;
         this.email = email;
