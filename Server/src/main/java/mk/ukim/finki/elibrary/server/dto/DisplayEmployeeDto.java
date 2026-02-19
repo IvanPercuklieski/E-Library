@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 public record DisplayEmployeeDto(Long id,
                                  Long userId,
                                  String username,
-                                 String email,
                                  String role) {
 
 
@@ -15,7 +14,6 @@ public record DisplayEmployeeDto(Long id,
                 employee.getId(),
                 employee.getUser().getId(),
                 employee.getUsername(),
-                employee.getEmail(),
                 employee.getRole().name()
         );
     }

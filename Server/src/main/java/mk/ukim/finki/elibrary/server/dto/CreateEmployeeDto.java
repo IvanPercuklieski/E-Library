@@ -8,10 +8,8 @@ public record CreateEmployeeDto(Long userId,
                                 String password,
                                 String email,
                                 EmployeeType role) {
-//
-//    public Employee toEmployee(UserWrapper user) {
-//        return new Employee(user, username, password, email, role);
-//    }
 
-
+    public Employee toEmployee(UserWrapper user) {
+        return new Employee(user, username, password, role);
+    }
 }

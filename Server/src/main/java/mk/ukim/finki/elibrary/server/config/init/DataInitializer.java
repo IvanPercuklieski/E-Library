@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 //ima metod koj generira mnogu podatoci () i malku podatoci
 // kaj init e komentiran
@@ -330,9 +327,9 @@ public class DataInitializer {
         UserWrapper user1 = users.get(0);
         UserWrapper user2 = users.get(1);
 
-        Employee employee1 = new Employee( "admin", "admin123", "admin@mail.com", EmployeeType.ADMIN);
+        Employee employee1 = new Employee( user1, "admin", "admin123", EmployeeType.ADMIN);
         employee1.setUser(user1);
-        Employee employee2 = new Employee( "obichen", "ob123", "obichen@mail.com", EmployeeType.BASIC);
+        Employee employee2 = new Employee( user2, "obichen", "ob123", EmployeeType.BASIC);
 
         employeeRepository.saveAll(List.of(employee1, employee2));
         System.out.println("[DataInitializer] Seeded employees.");
@@ -711,7 +708,6 @@ public class DataInitializer {
                 lastName,
                 LocalDate.now(),
                 LocalDate.now().plusDays(membershipDays),
-                active,
                 email.trim()
         );
 
