@@ -51,7 +51,15 @@ public class BookDomainServiceImpl implements BookDomainService {
 
     @Override
     public BaseBook createBook(BaseBook book) {
-        return bookRepository.save(book);
+
+
+        BaseBook temp= bookRepository.save(book);
+
+        for(int i=0;i<temp.getNumBooks();i++){
+            BookCopy bookCopy=new BookCopy(temp);
+            bookCopyRepository.save(bookCopy);
+        }
+        return temp;
     }
 
     @Override

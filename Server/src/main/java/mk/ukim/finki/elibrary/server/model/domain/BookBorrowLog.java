@@ -34,4 +34,5 @@ public class BookBorrowLog {
     @JoinColumn(name = "user_id", nullable = false)
     private UserWrapper user;
 
+
 }

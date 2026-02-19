@@ -14,6 +14,7 @@ import mk.ukim.finki.elibrary.server.repository.AuthorRepository;
 import mk.ukim.finki.elibrary.server.repository.GenreRepository;
 import mk.ukim.finki.elibrary.server.service.backend.application.BookApplicationService;
 import mk.ukim.finki.elibrary.server.service.backend.application.ReviewApplicationService;
+import mk.ukim.finki.elibrary.server.service.domain.BookCopyDomainService;
 import mk.ukim.finki.elibrary.server.service.domain.BookDomainService;
 import mk.ukim.finki.elibrary.server.service.domain.ReviewDomainService;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class BookAplicationServiceImpl implements BookApplicationService {
     private final ReviewDomainService reviewDomainService;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
+
     public BookAplicationServiceImpl(BookDomainService bookDomainService, ReviewApplicationService reviewApplicationService, ReviewDomainService reviewDomainService, AuthorRepository authorRepository, GenreRepository genreRepository) {
         this.bookDomainService = bookDomainService;
         this.reviewApplicationService = reviewApplicationService;
@@ -58,7 +60,7 @@ public class BookAplicationServiceImpl implements BookApplicationService {
                 dto.numBooks()
         );
 
-        return DisplayBookBaseDto.from(bookDomainService.createBook(book));
+        return DisplayBookBaseDto.from( bookDomainService.createBook(book));
     }
    //bookDomainService.updateBook(book);
     @Override

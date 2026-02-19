@@ -27,8 +27,8 @@ public class BorrowedBook {
     @JoinColumn(name = "user_id")
     private UserWrapper user;
 
-    @ManyToOne
-    @JoinColumn(name = "book_copy_id")
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_copy_id", nullable = false, unique = true)
     private BookCopy bookCopy;
 
     public BorrowedBook(LocalDateTime borrowedAt, LocalDateTime dueDate, UserWrapper user, BookCopy bookCopy) {
