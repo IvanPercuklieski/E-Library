@@ -6,8 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "borrowed_books")
@@ -35,6 +33,46 @@ public class BorrowedBook {
         this.borrowedAt = borrowedAt;
         this.dueDate = dueDate;
         this.user = user;
+        this.bookCopy = bookCopy;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getBorrowedAt() {
+        return borrowedAt;
+    }
+
+    public void setBorrowedAt(LocalDateTime borrowedAt) {
+        this.borrowedAt = borrowedAt;
+    }
+
+    public LocalDateTime getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDateTime dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public UserWrapper getUser() {
+        return user;
+    }
+
+    public void setUser(UserWrapper user) {
+        this.user = user;
+    }
+
+    public BookCopy getBookCopy() {
+        return bookCopy;
+    }
+
+    public void setBookCopy(BookCopy bookCopy) {
         this.bookCopy = bookCopy;
     }
 }

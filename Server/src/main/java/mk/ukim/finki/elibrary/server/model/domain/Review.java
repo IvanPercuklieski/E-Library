@@ -39,4 +39,52 @@ public class Review {
         this.rating = rating;
         this.createdAt = LocalDateTime.now();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BaseBook getBook() {
+        return book;
+    }
+
+    public void setBook(BaseBook book) {
+        this.book = book;
+    }
+
+    public UserWrapper getUser() {
+        return user;
+    }
+
+    public void setUser(UserWrapper user) {
+        this.user = user;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
