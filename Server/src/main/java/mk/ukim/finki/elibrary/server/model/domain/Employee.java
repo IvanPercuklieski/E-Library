@@ -1,86 +1,85 @@
 package mk.ukim.finki.elibrary.server.model.domain;
-import lombok.*;
+import lombok.NoArgsConstructor;
 import mk.ukim.finki.elibrary.server.model.enumerations.EmployeeType;
 import jakarta.persistence.*;
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
+
+@Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "employees")
-public class Employee {
+public class Employee implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private UserWrapper user;
 
-    @Column
+    @Column(unique = true)
     private String username;
 
-    @Column
     private String password;
-
-    @Column
-    private String email;
 
     @Enumerated(EnumType.STRING)
     private EmployeeType role;
 
-    public Employee(String username, String password, String email, EmployeeType role) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.role = role;
-    }
+    private boolean isAccountNonExpired = true;
+    private boolean isAccountNonLocked = true;
+    private boolean isCredentialsNonExpired = true;
+    private boolean isEnabled = true;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
+    public Employee(Long id, UserWrapper user, String username, String password, EmployeeType role) {
         this.id = id;
-    }
-
-    public UserWrapper getUser() {
-        return user;
-    }
-
-    public void setUser(UserWrapper user) {
         this.user = user;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
         this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
-    public String getPassword() {
-        return password;
+    public Employee(UserWrapper user, String username, String password, EmployeeType role) {
+        this.user = user;
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
-    public void setPassword(String password) {
+    public Employee(UserWrapper user, String username, String password) {
+        this.user = user;
+        this.username = username;
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority( role.name()));
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
     }
 
-    public EmployeeType getRole() {
-        return role;
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
     }
 
-    public void setRole(EmployeeType role) {
-        this.role = role;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
     }
 }
