@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "books")
@@ -55,5 +53,65 @@ public class BaseBook {
         this.description = description;
         this.numBooks = numBooks;
         this.copies = new ArrayList<>();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public LocalDate getPubDate() {
+        return pubDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getNumBooks() {
+        return numBooks;
+    }
+
+    public List<BookCopy> getCopies() {
+        return copies;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    public void setPubDate(LocalDate pubDate) {
+        this.pubDate = pubDate;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setNumBooks(int numBooks) {
+        this.numBooks = numBooks;
+    }
+
+    public void setCopies(List<BookCopy> copies) {
+        this.copies = copies;
     }
 }

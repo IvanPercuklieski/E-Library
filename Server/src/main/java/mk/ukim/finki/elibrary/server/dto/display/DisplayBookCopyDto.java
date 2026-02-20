@@ -12,7 +12,7 @@ public record DisplayBookCopyDto(Long id, Long baseBookId, String baseBookTitle,
                 copy.getId(),
                 copy.getBaseBook().getId(),
                 copy.getBaseBook().getTitle(),
-                copy.getIsAvailable()
+                copy.getAvailable()
         );
     }
     public static List<DisplayBookCopyDto> from(List<BookCopy> bookCopies){
