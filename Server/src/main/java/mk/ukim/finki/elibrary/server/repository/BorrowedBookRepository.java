@@ -24,4 +24,5 @@ public interface BorrowedBookRepository extends JpaRepository<BorrowedBook, Long
     long countActiveBorrowingsByBaseBookId(@Param("baseBookId") Long baseBookId);
 
 
+    List<BorrowedBook> findAllByBookCopy_BaseBook_Id(Long bookId);
 }
