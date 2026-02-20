@@ -23,7 +23,9 @@ public class Employee implements UserDetails {
     @JoinColumn(name = "user_id")
     private UserWrapper user;
 
+    @Column(unique = true)
     private String username;
+
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -48,6 +50,12 @@ public class Employee implements UserDetails {
         this.username = username;
         this.password = password;
         this.role = role;
+    }
+
+    public Employee(UserWrapper user, String username, String password) {
+        this.user = user;
+        this.username = username;
+        this.password = password;
     }
 
     @Override

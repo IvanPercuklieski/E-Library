@@ -9,11 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public interface UserWrapperRepository extends JpaRepository<UserWrapper, Long> {
 
-    UserWrapper findUserWrapperByEmail(String email);
+    Optional<UserWrapper> findUserWrapperByEmail(String email);
 
     // This query updates the status only for users whose due date has passed
     // and who aren't already marked as expired.

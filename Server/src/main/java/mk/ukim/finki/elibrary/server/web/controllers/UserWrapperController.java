@@ -39,7 +39,7 @@ public class UserWrapperController {
     }
 
     @PostMapping("/add")
-    @Operation(summary = "Add a genre", description = "Add user to the system. Start date from the membership is the current time and date, while the end is exactly one month from the start date.")
+    @Operation(summary = "Add a user", description = "Add user to the system. Start date from the membership is the current time and date, while the end is exactly one month from the start date.")
     public ResponseEntity<?> addUser(@RequestBody CreateUserWrapperDto userDto) {
         try{
             return ResponseEntity.ok(userWrapperApplicationService.adduser(userDto));
