@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface SeatRepository extends JpaRepository<Seat, Long> {
-    List<Seat> findByRoom(Room room);
+    List<Seat> findByRoomId(Long roomId);
     Optional<Seat> findByRoomAndSeatNumber(Room room, int seatNumber);
     List<Seat> findByRoomIdAndIsTakenFalse(Long roomId);
 }

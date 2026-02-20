@@ -8,8 +8,6 @@ import java.util.List;
 
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "bookcopies")
@@ -45,4 +43,43 @@ public class BookCopy {
         this.isAvailable=true;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public BaseBook getBaseBook() {
+        return baseBook;
+    }
+
+    public void setBaseBook(BaseBook baseBook) {
+        this.baseBook = baseBook;
+    }
+
+    public List<BookBorrowLog> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(List<BookBorrowLog> logs) {
+        this.logs = logs;
+    }
+
+    public BorrowedBook getBorrowedBook() {
+        return borrowedBook;
+    }
+
+    public void setBorrowedBook(BorrowedBook borrowedBook) {
+        this.borrowedBook = borrowedBook;
+    }
+
+    public Boolean getAvailable() {
+        return isAvailable;
+    }
+
+    public void setAvailable(Boolean available) {
+        isAvailable = available;
+    }
 }
