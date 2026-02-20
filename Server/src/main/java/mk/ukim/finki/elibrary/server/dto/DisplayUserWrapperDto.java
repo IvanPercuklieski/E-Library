@@ -1,6 +1,7 @@
 package mk.ukim.finki.elibrary.server.dto;
 
 import mk.ukim.finki.elibrary.server.model.domain.UserWrapper;
+import mk.ukim.finki.elibrary.server.model.enumerations.MembershipStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,10 +10,11 @@ import java.util.stream.Collectors;
 public record DisplayUserWrapperDto(Long id,
                                     String name,
                                     String surname,
+                                    String email,
                                     LocalDate fromDate,
                                     LocalDate dueDate,
-                                    boolean isMember,
-                                    List<String> borrowedBookTitles) {
+                                    List<String> borrowedBookTitles,
+                                    MembershipStatus membershipStatus) {
 
     public static DisplayUserWrapperDto from(UserWrapper user) {
         List<String> borrowedTitles = user.getBorrowedBooks() != null
@@ -25,10 +27,11 @@ public record DisplayUserWrapperDto(Long id,
                 user.getId(),
                 user.getName(),
                 user.getSurname(),
+                user.getEmail(),
                 user.getFromDate(),
                 user.getDueDate(),
-                user.isMember(),
-                borrowedTitles
+                borrowedTitles,
+                user.getMembershipStatus()
         );
     }
     public static List<DisplayUserWrapperDto> from(List<UserWrapper> users) {

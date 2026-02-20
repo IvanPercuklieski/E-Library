@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
 public class UserWrapperNotFoundException extends RuntimeException {
     public UserWrapperNotFoundException(Long id) {
-        super(String.format("User wrapper with id %s not found", id));
+        super(String.format("User with id %s is not found", id));
     }
 }
