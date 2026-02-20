@@ -1,12 +1,16 @@
 package mk.ukim.finki.elibrary.server.web.controllers;
 
 
+import mk.ukim.finki.elibrary.server.dto.create.CreateBookBorrowLogDto;
 import mk.ukim.finki.elibrary.server.dto.create.CreateBorrowedBookDto;
 
+import mk.ukim.finki.elibrary.server.dto.display.DisplayBorrowedBookDto;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateBorrowedBookDto;
 import mk.ukim.finki.elibrary.server.model.domain.BorrowedBook;
 
-import mk.ukim.finki.elibrary.server.service.backend.application.BorrowApplicationService;
-
+import mk.ukim.finki.elibrary.server.service.backend.application.BorrowedBookApplicationService;
+import mk.ukim.finki.elibrary.server.service.domain.BorrowedBookDomainService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -15,44 +19,70 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/borrow")
+@RequestMapping("/api/borrowings")
 public class BookBorrowController {
 
-    private final BorrowApplicationService service;
+    private final BorrowedBookDomainService borrowedBookDomainService;
 
-
-    public BookBorrowController(BorrowApplicationService service) {
-        this.service = service;
+    public BookBorrowController(BorrowedBookDomainService borrowedBookDomainService) {
+        this.borrowedBookDomainService = borrowedBookDomainService;
     }
 
 
-    @PostMapping("/borrow")
-    public BorrowedBook borrow(@RequestBody CreateBorrowedBookDto dto) {
-        return service.borrowBook(dto.userId(), dto.bookCopyId(), dto.borrowedAt().toLocalDate(), dto.dueDate().toLocalDate());
+    @PostMapping("/create")
+    public ResponseEntity<DisplayBorrowedBookDto> create(@RequestBody CreateBorrowedBookDto dto) {
+        BorrowedBook created = borrowedBookDomainService.createBookBorrowing(dto);
+        return ResponseEntity.ok(DisplayBorrowedBookDto.from(created));
     }
 
 
-    @GetMapping
-    public List<BorrowedBook> all() {
-        return service.listAll();
+    @PutMapping("/update/{id}")
+    public ResponseEntity<DisplayBorrowedBookDto> update(@PathVariable Long id,
+                                                         @RequestBody UpdateBorrowedBookDto dto) {
+        BorrowedBook updated = borrowedBookDomainService.updateBookBorrowing(id, dto);
+        return ResponseEntity.ok(DisplayBorrowedBookDto.from(updated));
     }
 
 
-    @GetMapping("/user/{userId}")
-    public List<BorrowedBook> getByUser(@PathVariable Long userId) {
-        return service.getBorrowedBooksByUser(userId);
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteWithLog(@RequestBody CreateBookBorrowLogDto dto) {
+        borrowedBookDomainService.deleteBookBorrowing(dto);
+        return ResponseEntity.noContent().build();
     }
 
 
-    @PostMapping("/return/{borrowedBookId}")
-    public void returnBook(@PathVariable Long borrowedBookId, @RequestBody Map<String, String> body) {
-        LocalDate returnDate = LocalDate.parse(body.get("returnDate"));
-        service.returnBook(borrowedBookId, returnDate);
+    @GetMapping("/getAll")
+    public ResponseEntity<List<DisplayBorrowedBookDto>> getAll() {
+        List<DisplayBorrowedBookDto> result = borrowedBookDomainService.getAllBookBorrowings()
+                .stream()
+                .map(DisplayBorrowedBookDto::from)
+                .toList();
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/price")
-    public double calculatePrice(@RequestParam Long userId) {
-        return service.calculateRentalFee(userId);
+
+    @GetMapping("/get/{borrowingId}")
+    public ResponseEntity<DisplayBorrowedBookDto> getById(@PathVariable Long borrowingId) {
+        BorrowedBook borrowing = borrowedBookDomainService.getById(borrowingId);
+        return ResponseEntity.ok(DisplayBorrowedBookDto.from(borrowing));
     }
 
+
+    @GetMapping("/get/by-book/{bookId}")
+    public ResponseEntity<List<DisplayBorrowedBookDto>> getByBook(@PathVariable Long bookId) {
+        List<DisplayBorrowedBookDto> result = borrowedBookDomainService.getAllBookBorrowingsByBook(bookId)
+                .stream()
+                .map(DisplayBorrowedBookDto::from)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/get/by-user/{userId}")
+    public ResponseEntity<List<DisplayBorrowedBookDto>> getByUser(@PathVariable Long userId) {
+        List<DisplayBorrowedBookDto> result = borrowedBookDomainService.getAllBookBorrowingsByUser(userId)
+                .stream()
+                .map(DisplayBorrowedBookDto::from)
+                .toList();
+        return ResponseEntity.ok(result);
+    }
 }
