@@ -19,9 +19,6 @@ public interface RoomDomainService {
 
     List<Seat> getSeatsInRoom(Long roomId);
 
-    boolean isSeatAvailable(Long seatId);
 
-    void reserveSeat(Long seatId, Long userId);
-
-    void releaseSeat(Long seatId);
+    Room saveRoomEntity(Room room);
 }

@@ -1,4 +1,7 @@
 package mk.ukim.finki.elibrary.server.service.backend.application;
+import mk.ukim.finki.elibrary.server.dto.CreateRoomDto;
+import mk.ukim.finki.elibrary.server.dto.DisplayRoomDto;
+import mk.ukim.finki.elibrary.server.dto.update.UpdateRoomDto;
 import mk.ukim.finki.elibrary.server.model.domain.Room;
 import mk.ukim.finki.elibrary.server.model.domain.Seat;
 
@@ -6,7 +9,7 @@ import java.util.List;
 
 public interface RoomApplicationService {
 
-    Room createRoom(Room room);
+    DisplayRoomDto createRoom(CreateRoomDto dto);
 
     Room updateRoom(Room room);
 
@@ -14,13 +17,15 @@ public interface RoomApplicationService {
 
     Room getRoomById(Long roomId);
 
-    List<Room> getAllRooms();
+    //List<Room> getAllRooms();
 
     List<Seat> getSeatsInRoom(Long roomId);
 
-    boolean isSeatAvailable(Long seatId);
+    List<DisplayRoomDto> getRoomsWithAvailableSeats();
 
-    void reserveSeat(Long seatId, Long userId);
+    DisplayRoomDto updateRoom(Long id, UpdateRoomDto dto);
 
-    void releaseSeat(Long seatId);
+    DisplayRoomDto getRoom(Long id);
+
+    List<DisplayRoomDto> getAllRooms();
 }

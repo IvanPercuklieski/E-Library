@@ -21,4 +21,7 @@ public interface UserWrapperService {
     Optional<UserWrapper> renewMembership(Long userId);
 
     Optional<UserWrapper> cancelMembership(Long userId);
+
+    UserWrapper getUserEntityById(Long id);
+
 }

@@ -68,37 +68,11 @@ public class RoomDomainServiceImpl implements RoomDomainService {
         return room.getSeats();
     }
 
-    @Override
-    public boolean isSeatAvailable(Long seatId) {
-        Seat seat = seatRepository.findById(seatId)
-                .orElseThrow(() -> new SeatNotFoundException(seatId));
-        return !seat.isTaken();
-    }
 
     @Override
-    public void reserveSeat(Long seatId, Long userId) {
-        Seat seat = seatRepository.findById(seatId)
-                .orElseThrow(() -> new SeatNotFoundException(seatId));
-
-        if (seat.isTaken()) {
-            throw new SeatAlreadyTakenException(seatId);
-        }
-
-        UserWrapper user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserWrapperNotFoundException(userId));
-
-        seat.setTaken(true);
-        seat.setUser(user);
-        seatRepository.save(seat);
+    public Room saveRoomEntity(Room room) {
+        return roomRepository.save(room);
     }
 
-    @Override
-    public void releaseSeat(Long seatId) {
-        Seat seat = seatRepository.findById(seatId)
-                .orElseThrow(() -> new SeatNotFoundException(seatId));
-
-        seat.setTaken(false);
-        seat.setUser(null);
-        seatRepository.save(seat);
-    }
 }
+

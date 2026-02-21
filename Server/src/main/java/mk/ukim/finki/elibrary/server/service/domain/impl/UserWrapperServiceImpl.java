@@ -121,4 +121,10 @@ public class UserWrapperServiceImpl implements UserWrapperService {
             throw new MembershipIsAlreadyCancelledException(userId);
         }
     }
+
+    @Override
+    public UserWrapper getUserEntityById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
