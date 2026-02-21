@@ -1,84 +1,59 @@
 package mk.ukim.finki.elibrary.server.web.controllers;
 
-import mk.ukim.finki.elibrary.server.dto.CreateBookBorrowLogDto;
-import mk.ukim.finki.elibrary.server.model.domain.BookBorrowLog;
-
-import mk.ukim.finki.elibrary.server.model.domain.BookCopy;
-import mk.ukim.finki.elibrary.server.model.domain.UserWrapper;
-import mk.ukim.finki.elibrary.server.repository.BookCopyRepository;
-import mk.ukim.finki.elibrary.server.repository.UserWrapperRepository;
-
-import mk.ukim.finki.elibrary.server.service.backend.application.impl.BorrowedBookLogServiceImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import mk.ukim.finki.elibrary.server.dto.display.DisplayBookBorrowLogDto;
+import mk.ukim.finki.elibrary.server.service.backend.application.BorrowedBookLogApplicationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Random;
-
-//Ovoj kontroler za create-metoda na log nema da vi treba(beshe za testiranje), bidejki treba da se
-//kreira objektot koga kje se kreira bookborrowing, samo logot kje bide returedAt -> null
-//(moeto mislenje e da nema specijalen endpoint za create log,
-// no da si ostanat ostanatite endpointi za drugite operacii pr. /end kade shto kje pishuvate
-// notes i returnedAt)
-
 
 @RestController
 @RequestMapping("/api/borrow-logs")
 public class BorrowedBookLogController {
 
-    private final BorrowedBookLogServiceImpl bookBorrowLogService;
-    private final UserWrapperRepository userWrapperRepository;
-    private final BookCopyRepository bookCopyRepository;
-    private final Random random = new Random();
+    private final BorrowedBookLogApplicationService borrowedBookLogApplicationService;
 
-    public BorrowedBookLogController(BorrowedBookLogServiceImpl bookBorrowLogService,
-                                     UserWrapperRepository userWrapperRepository,
-                                     BookCopyRepository bookCopyRepository) {
-        this.bookBorrowLogService = bookBorrowLogService;
-        this.userWrapperRepository = userWrapperRepository;
-        this.bookCopyRepository = bookCopyRepository;
+    public BorrowedBookLogController(BorrowedBookLogApplicationService borrowedBookLogApplicationService) {
+        this.borrowedBookLogApplicationService = borrowedBookLogApplicationService;
     }
 
 
-    @PostMapping
-    public ResponseEntity<BookBorrowLog> createBorrowLog(
-            @RequestBody CreateBookBorrowLogDto request) {
-
-        BookBorrowLog log = bookBorrowLogService.createBorrowLog(
-                request.userId(),
-                request.bookCopyId(),
-                request.borrowedAt(),
-                request.dueDate(),
-                request.notes()
-        );
-
-        return ResponseEntity.status(201).body(log);
+    @GetMapping("/getAll")
+    public ResponseEntity<List<DisplayBookBorrowLogDto>> getAll() {
+        return ResponseEntity.ok(borrowedBookLogApplicationService.getAll());
     }
 
 
-    @GetMapping("/simulate")
-    @PostMapping("/simulate")
-    public ResponseEntity<BookBorrowLog> simulateRandomBorrow() {
+    @GetMapping("/get/by-user/{userId}")
+    public ResponseEntity<List<DisplayBookBorrowLogDto>> getAllForUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(borrowedBookLogApplicationService.getAllForUser(userId));
+    }
 
-        List<UserWrapper> users = userWrapperRepository.findAll();
-        List<BookCopy> copies = bookCopyRepository.findAll();
 
-        if (users.isEmpty() || copies.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping("/get/by-copy/{bookCopyId}")
+    public ResponseEntity<List<DisplayBookBorrowLogDto>> getAllForBookCopy(@PathVariable Long bookCopyId) {
+        return ResponseEntity.ok(borrowedBookLogApplicationService.getAllForBookCopy(bookCopyId));
+    }
 
-        UserWrapper user = users.get(random.nextInt(users.size()));
-        BookCopy copy = copies.get(random.nextInt(copies.size()));
 
-        BookBorrowLog log = bookBorrowLogService.createBorrowLog(
-                Long.parseLong("16"),
-                copy.getId(),
-                LocalDateTime.of(2025, 1, 10, 14, 30),
-                LocalDateTime.of(2025, 1, 20, 14, 30),
-                "Simulated borrow for testing ML"
-        );
+    @DeleteMapping("/delete/by-copy/{bookCopyId}")
+    public ResponseEntity<Void> deleteAllForBookCopy(@PathVariable Long bookCopyId) {
+        borrowedBookLogApplicationService.deleteAllForBookCopy(bookCopyId);
+        return ResponseEntity.noContent().build();
+    }
 
-        return ResponseEntity.status(201).body(log);
+
+    @DeleteMapping("/delete/by-user/{userId}")
+    public ResponseEntity<Void> deleteAllForUser(@PathVariable Long userId) {
+        borrowedBookLogApplicationService.deleteAllForUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<Void> deleteAll() {
+        borrowedBookLogApplicationService.deleteAll();
+        return ResponseEntity.noContent().build();
     }
 }

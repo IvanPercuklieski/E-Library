@@ -15,6 +15,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface BorrowedBookLogRepository extends JpaRepository<BookBorrowLog, Long> {
     List<BookBorrowLog> findByUser(UserWrapper user);
 
+    List<BookBorrowLog> getBookBorrowLogsByBookCopy(BookCopy bookCopy);
+
     interface UserGenreCountProjection {
         Long getUserId();
         Long getGenreId();
@@ -54,6 +56,7 @@ public interface BorrowedBookLogRepository extends JpaRepository<BookBorrowLog, 
     List<BookBorrowLog> findByBookCopy(BookCopy bookCopy);
 
     Optional<BookBorrowLog> findByBookCopyAndUserAndReturnedAtIsNull(BookCopy bookCopy, UserWrapper user);
-
+    void deleteAllByBookCopy(BookCopy bookCopy);
+    void deleteAllByUser(UserWrapper user);
 
 }
