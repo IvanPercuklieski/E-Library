@@ -13,4 +13,19 @@ public interface SeatDomainService {
 
     void deleteSeatEntity(Long id);
 
+    void saveAllSeats(List<Seat> seats);
+
+    void deleteSeats(List<Seat> seats);
+
+    List<Seat> getAvailableSeatsByRoom(Long roomId);
+
+    long countAvailableSeats(Long roomId);
+
+    boolean isSeatAvailable(Long seatId);
+
+    void reserveSeat(Long seatId, Long userId);
+
+    void releaseSeat(Long seatId);
+
+
 }

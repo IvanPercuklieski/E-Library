@@ -43,4 +43,22 @@ public class ReviewDomainServiceImpl implements ReviewDomainService {
     public List<Review> getReviewsForBook(Long bookId) {
         return reviewRepository.findByBookId(bookId);
     }
+
+    @Override
+    public Review getReviewEntityById(Long id) {
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+    }
+
+    @Override
+    public Review saveReviewEntity(Review review) {
+        return reviewRepository.save(review);
+    }
+
+    @Override
+    public void deleteReviewEntity(Review review) {
+        reviewRepository.delete(review);
+    }
+
+
 }

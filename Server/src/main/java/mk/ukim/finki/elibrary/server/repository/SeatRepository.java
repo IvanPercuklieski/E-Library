@@ -15,4 +15,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findByRoomIdAndIsTakenFalse(Long roomId);
     
     boolean existsSeatByUser_Id(Long userId);
+
+    long countByRoomIdAndIsTakenFalse(Long roomId);
 }

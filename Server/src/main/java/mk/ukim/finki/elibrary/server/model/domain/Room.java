@@ -71,4 +71,22 @@ public class Room {
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
     }
+
+    public long getAvailableSeatsCount() {
+        if (seats == null) return 0;
+        return seats.stream()
+                .filter(seat -> !seat.isTaken())
+                .count();
+    }
+
+    public boolean hasFreeSeats() {
+        return getAvailableSeatsCount() > 0;
+    }
+
+    public boolean hasReservedSeats() {
+        if (seats == null) return false;
+        return seats.stream()
+                .anyMatch(Seat::isTaken);
+    }
+
 }
