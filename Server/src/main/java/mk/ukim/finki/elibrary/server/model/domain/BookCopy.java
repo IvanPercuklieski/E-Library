@@ -75,11 +75,11 @@ public class BookCopy {
         this.borrowedBook = borrowedBook;
     }
 
-    public Boolean getAvailable() {
+    public Boolean getIsAvailable() {
         return isAvailable;
     }
 
-    public void setAvailable(Boolean available) {
+    public void setIsAvailable(Boolean available) {
         isAvailable = available;
     }
 }
