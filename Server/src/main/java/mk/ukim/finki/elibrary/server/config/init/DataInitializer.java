@@ -5,6 +5,7 @@ import mk.ukim.finki.elibrary.server.model.domain.*;
 import mk.ukim.finki.elibrary.server.model.enumerations.EmployeeType;
 import mk.ukim.finki.elibrary.server.repository.*;
 import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +29,8 @@ public class DataInitializer {
     private final BorrowedBookLogRepository bookBorrowLogRepository;
     private final EmployeeRepository employeeRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     public DataInitializer(
             AuthorRepository authorRepository,
             GenreRepository genreRepository,
@@ -38,8 +41,8 @@ public class DataInitializer {
             SeatRepository seatRepository,
             BorrowedBookRepository borrowedBookRepository,
             BorrowedBookLogRepository bookBorrowLogRepository,
-            EmployeeRepository employeeRepository
-    ) {
+            EmployeeRepository employeeRepository,
+            PasswordEncoder passwordEncoder) {
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
         this.baseBookRepository = baseBookRepository;
@@ -50,6 +53,7 @@ public class DataInitializer {
         this.borrowedBookRepository = borrowedBookRepository;
         this.bookBorrowLogRepository = bookBorrowLogRepository;
         this.employeeRepository = employeeRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -327,9 +331,9 @@ public class DataInitializer {
         UserWrapper user1 = users.get(0);
         UserWrapper user2 = users.get(1);
 
-        Employee employee1 = new Employee( user1, "admin", "admin123", EmployeeType.ADMIN);
+        Employee employee1 = new Employee( user1, "admin", passwordEncoder.encode("admin123"), EmployeeType.ADMIN);
         employee1.setUser(user1);
-        Employee employee2 = new Employee( user2, "obichen", "ob123", EmployeeType.BASIC);
+        Employee employee2 = new Employee( user2, "obichen", passwordEncoder.encode("ob123"), EmployeeType.BASIC);
 
         employeeRepository.saveAll(List.of(employee1, employee2));
         System.out.println("[DataInitializer] Seeded employees.");
