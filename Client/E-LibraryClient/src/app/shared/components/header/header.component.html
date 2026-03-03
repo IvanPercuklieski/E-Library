@@ -1,3 +1,28 @@
-<p>
-  header works!
-</p>
+<ion-toolbar>
+    <ion-title>{{ title() }}</ion-title>
+
+    <ion-buttons slot="end">
+        <ion-button (click)="openProfileMenuPopover($event)">
+            @if(isLoggedIn()){
+                Hello, {{ currentUser.username }}
+            }
+            <ion-icon size="large" name="person-circle"></ion-icon>
+        </ion-button>
+
+        <ion-popover #profileMenuPopover dismissOnSelect="true" [isOpen]="isProfileMenuOpen()" (didDismiss)="isProfileMenuOpen.set(false)">
+            <ng-template>
+                <ion-list>
+
+                    @if(!isLoggedIn()){
+                        <ion-item button (click)="onLoginBtnClick()">Login</ion-item>
+                        <ion-item button (click)="onRegisterBtnClick()">Register</ion-item>
+                    }@else {
+                        <ion-item button (click)="onLogout()">Logout</ion-item>
+                    }
+                </ion-list>
+            </ng-template>
+        </ion-popover>
+
+    </ion-buttons> 
+
+</ion-toolbar>

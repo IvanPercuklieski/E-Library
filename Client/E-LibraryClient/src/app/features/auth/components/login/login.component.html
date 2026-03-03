@@ -1,3 +1,37 @@
-<p>
-  login works!
-</p>
+<ion-header>
+    <app-header title="Login"></app-header>
+</ion-header>
+
+<ion-content class="ion-padding login-page">
+
+    <div style="max-width: 500px; margin: 0 auto;">
+        <ion-card>
+            <ion-card-header>
+                <ion-card-title class="ion-text-center">Login is only needed for employees of the library</ion-card-title>
+            </ion-card-header>
+
+            <ion-card-content>
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <ion-item>
+                        <ion-input label="Username" labelPlacement="floating" formControlName="username" type="text"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                        <ion-input label="Password" labelPlacement="floating" formControlName="password" type="password"></ion-input>
+                    </ion-item>
+
+                    <ion-text color="danger" [hidden]="!errorMessage()">{{ errorMessage() }}</ion-text>
+
+                    <ion-button expand="block" type="submit" class="ion-margin-top" [disabled]="isSubmitting()">Login</ion-button>
+
+                    <div class="register-link ion-text-center ion-margin-top">
+                        <ion-button fill="clear" size="small" (click)="goToRegister()" [disabled]="isSubmitting()">
+                            Don't have an account? Register
+                        </ion-button>
+                    </div>
+                </form>
+            </ion-card-content>
+        </ion-card>
+    </div>
+
+</ion-content>
