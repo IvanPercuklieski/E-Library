@@ -10,7 +10,7 @@ export interface loginCredentials {
 }
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class Auth {
 	private storageService = inject(StorageService);
@@ -24,23 +24,21 @@ export class Auth {
 	}
 
 	login(loginCredentials: loginCredentials) {
-		return this.http.post<any>('employee/login', loginCredentials)
-			.pipe(
-				switchMap(resp => {
-					if(!resp || !resp.token) {
-						throw new Error('Invalid login response');
-					}
-					let user = {
-						username: loginCredentials.username,
-						token: resp.token,
-						role: this.tokenDecode.decodeJWTToken(resp.token).roles[0].authority // Go proveriv samo za admin
-					}
-					this.storageService.set('currentUser', user);
-					this.isAuthenticated.set(true);
-					return of(true);
-				}),
-				
-			)
+		return this.http.post<any>('employee/login', loginCredentials).pipe(
+			switchMap((resp) => {
+				if (!resp || !resp.token) {
+					throw new Error('Invalid login response');
+				}
+				let user = {
+					username: loginCredentials.username,
+					token: resp.token,
+					role: this.tokenDecode.decodeJWTToken(resp.token).roles[0].authority, // Go proveriv samo za admin
+				};
+				this.storageService.set('currentUser', user);
+				this.isAuthenticated.set(true);
+				return of(true);
+			}),
+		);
 	}
 
 	register(registerData: any) {

@@ -3,14 +3,38 @@ import { inject } from '@angular/core';
 import { Auth } from '../../services/auth';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonItem, IonInput, IonText, IonButton, IonHeader } from "@ionic/angular/standalone";
-import { HeaderComponent } from "src/app/shared/components/header/header.component";
+import {
+	IonContent,
+	IonCard,
+	IonCardHeader,
+	IonCardTitle,
+	IonCardContent,
+	IonItem,
+	IonInput,
+	IonText,
+	IonButton,
+	IonHeader,
+} from '@ionic/angular/standalone';
+import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss'],
-  imports: [IonHeader, IonButton, IonText, IonInput, IonItem, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, ReactiveFormsModule, HeaderComponent],
+	selector: 'app-register',
+	templateUrl: './register.component.html',
+	styleUrls: ['./register.component.scss'],
+	imports: [
+		IonHeader,
+		IonButton,
+		IonText,
+		IonInput,
+		IonItem,
+		IonCardContent,
+		IonCardTitle,
+		IonCardHeader,
+		IonCard,
+		IonContent,
+		ReactiveFormsModule,
+		HeaderComponent,
+	],
 })
 export class RegisterComponent {
 	private authService = inject(Auth);
@@ -25,7 +49,7 @@ export class RegisterComponent {
 		}),
 		email: new FormControl('', {
 			validators: [Validators.required, Validators.email],
-		})
+		}),
 	});
 
 	isSubmitting = signal(false);
@@ -36,7 +60,7 @@ export class RegisterComponent {
 			const registerData = {
 				username: this.registerForm.value.username!,
 				password: this.registerForm.value.password!,
-				email: this.registerForm.value.email!
+				email: this.registerForm.value.email!,
 			};
 
 			this.authService.register(registerData).subscribe({
@@ -48,9 +72,8 @@ export class RegisterComponent {
 				error: (err) => {
 					this.isSubmitting.set(false);
 					this.errorMessage.set(err.error || 'Registration failed. Please try again.');
-				}
-			})
-
+				},
+			});
 		}
 	}
 

@@ -3,14 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { Seating } from './seating';
 
 describe('Seating', () => {
-  let service: Seating;
+	let service: Seating;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Seating);
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({});
+		service = TestBed.inject(Seating);
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(service).toBeTruthy();
+	});
 });

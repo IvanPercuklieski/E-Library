@@ -1,3 +1,11 @@
 <ion-header>
-    <app-header></app-header>
+	<app-header></app-header>
 </ion-header>
+
+<ion-content>
+	<div class="books-container">
+		<div class="books-grid">
+			<app-book-card *ngFor="let book of books" [book]="book"></app-book-card>
+		</div>
+	</div>
+</ion-content>

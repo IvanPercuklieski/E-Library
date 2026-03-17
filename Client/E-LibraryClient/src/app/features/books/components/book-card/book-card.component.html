@@ -1,3 +1,25 @@
-<p>
-  book-card works!
-</p>
+<ion-card [class.unavailable]="!isAvailable()">
+	<ion-card-header>
+		<ion-card-title class="book-title">{{ book.title }}</ion-card-title>
+		<div class="book-author">{{ book.authorName }}</div>
+	</ion-card-header>
+
+	<ion-card-content>
+		<div class="book-genres">
+			<span *ngFor="let genre of book.genreNames" class="genre-badge">
+				{{ genre }}
+			</span>
+		</div>
+
+		<p class="book-description">{{ book.description }}</p>
+
+		<div class="book-stats">
+			<div class="stat">
+				<span class="stat-label">Available:</span>
+				<span class="stat-value" [class.available]="isAvailable()">
+					{{ book.availableBookCopies }}/{{ book.totalBookCopies }}
+				</span>
+			</div>
+		</div>
+	</ion-card-content>
+</ion-card>

@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-seating-grid',
-  templateUrl: './seating-grid.component.html',
-  styleUrls: ['./seating-grid.component.scss'],
+	selector: 'app-seating-grid',
+	templateUrl: './seating-grid.component.html',
+	styleUrls: ['./seating-grid.component.scss'],
 })
-export class SeatingGridComponent  implements OnInit {
+export class SeatingGridComponent implements OnInit {
+	constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {}
-
+	ngOnInit() {}
 }

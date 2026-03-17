@@ -6,15 +6,15 @@ import { addIcons } from 'ionicons';
 
 import { personCircle } from 'ionicons/icons';
 
-addIcons({personCircle});
+addIcons({ personCircle });
 
 @Component({
-  selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
-  standalone: true,
-  imports: [CommonModule, IonApp, IonRouterOutlet],
+	selector: 'app-root',
+	templateUrl: 'app.component.html',
+	styleUrls: ['app.component.scss'],
+	standalone: true,
+	imports: [CommonModule, IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-  constructor() {}
+	constructor() {}
 }

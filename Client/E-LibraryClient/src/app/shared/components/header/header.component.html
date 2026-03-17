@@ -1,28 +1,40 @@
 <ion-toolbar>
-    <ion-title>{{ title() }}</ion-title>
+	<div class="toolbar-container">
+		<div class="toolbar-inner">
+			<ion-buttons slot="start">
+				<ion-button (click)="onTitleClick()">
+					<span class="logo">E-Library</span>
+				</ion-button>
+				<ion-button (click)="onSeatingClick()">Seating</ion-button>
+				<ion-button (click)="onAdminPanelClick()">Admin Panel</ion-button>
+			</ion-buttons>
 
-    <ion-buttons slot="end">
-        <ion-button (click)="openProfileMenuPopover($event)">
-            @if(isLoggedIn()){
-                Hello, {{ currentUser.username }}
-            }
-            <ion-icon size="large" name="person-circle"></ion-icon>
-        </ion-button>
+			<ion-buttons slot="end">
+				<ion-button (click)="openProfileMenuPopover($event)">
+					@if (isLoggedIn()) {
+						Hello, {{ currentUser.username }}
+					}
+					<ion-icon size="large" name="person-circle"></ion-icon>
+				</ion-button>
 
-        <ion-popover #profileMenuPopover dismissOnSelect="true" [isOpen]="isProfileMenuOpen()" (didDismiss)="isProfileMenuOpen.set(false)">
-            <ng-template>
-                <ion-list>
-
-                    @if(!isLoggedIn()){
-                        <ion-item button (click)="onLoginBtnClick()">Login</ion-item>
-                        <ion-item button (click)="onRegisterBtnClick()">Register</ion-item>
-                    }@else {
-                        <ion-item button (click)="onLogout()">Logout</ion-item>
-                    }
-                </ion-list>
-            </ng-template>
-        </ion-popover>
-
-    </ion-buttons> 
-
+				<ion-popover
+					#profileMenuPopover
+					dismissOnSelect="true"
+					[isOpen]="isProfileMenuOpen()"
+					(didDismiss)="isProfileMenuOpen.set(false)"
+				>
+					<ng-template>
+						<ion-list>
+							@if (!isLoggedIn()) {
+								<ion-item button (click)="onLoginBtnClick()">Login</ion-item>
+								<ion-item button (click)="onRegisterBtnClick()">Register</ion-item>
+							} @else {
+								<ion-item button (click)="onLogout()">Logout</ion-item>
+							}
+						</ion-list>
+					</ng-template>
+				</ion-popover>
+			</ion-buttons>
+		</div>
+	</div>
 </ion-toolbar>
