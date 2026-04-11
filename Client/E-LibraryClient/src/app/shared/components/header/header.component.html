@@ -5,14 +5,17 @@
 				<ion-button (click)="onTitleClick()">
 					<span class="logo">E-Library</span>
 				</ion-button>
-				<ion-button (click)="onSeatingClick()">Seating</ion-button>
-				<ion-button (click)="onAdminPanelClick()">Admin Panel</ion-button>
+				<ion-button (click)="onSeatingClick()">Books</ion-button>
+				<ion-button (click)="onBooksClick()">Rooms</ion-button>
+				@if (isLoggedIn() && canAccessResources()) {
+					<ion-button (click)="onAdminPanelClick()">Resources</ion-button>
+				}
 			</ion-buttons>
 
 			<ion-buttons slot="end">
 				<ion-button (click)="openProfileMenuPopover($event)">
 					@if (isLoggedIn()) {
-						Hello, {{ currentUser.username }}
+						Hello, {{ currentUser()?.username }}
 					}
 					<ion-icon size="large" name="person-circle"></ion-icon>
 				</ion-button>
@@ -27,13 +30,46 @@
 						<ion-list>
 							@if (!isLoggedIn()) {
 								<ion-item button (click)="onLoginBtnClick()">Login</ion-item>
-								<ion-item button (click)="onRegisterBtnClick()">Register</ion-item>
 							} @else {
 								<ion-item button (click)="onLogout()">Logout</ion-item>
 							}
 						</ion-list>
 					</ng-template>
 				</ion-popover>
+
+				<ion-modal [isOpen]="isLoginModalOpen()" (didDismiss)="closeLoginModal()">
+					<ng-template>
+						<ion-header>
+							<ion-toolbar>
+								<ion-title>Employee Login</ion-title>
+								<ion-buttons slot="end">
+									<ion-button (click)="closeLoginModal()">Close</ion-button>
+								</ion-buttons>
+							</ion-toolbar>
+						</ion-header>
+						<ion-content class="ion-padding">
+							<p class="login-modal-note">Only employees need to log in.</p>
+
+							<form [formGroup]="loginForm" (ngSubmit)="submitLogin()" class="login-modal-form">
+								<ion-item lines="none">
+									<ion-label position="stacked">Username</ion-label>
+									<ion-input formControlName="username"></ion-input>
+								</ion-item>
+
+								<ion-item lines="none">
+									<ion-label position="stacked">Password</ion-label>
+									<ion-input type="password" formControlName="password"></ion-input>
+								</ion-item>
+
+								@if (loginError()) {
+									<ion-text color="danger">{{ loginError() }}</ion-text>
+								}
+
+								<ion-button type="submit" expand="block" [disabled]="isLoggingIn()">Login</ion-button>
+							</form>
+						</ion-content>
+					</ng-template>
+				</ion-modal>
 			</ion-buttons>
 		</div>
 	</div>

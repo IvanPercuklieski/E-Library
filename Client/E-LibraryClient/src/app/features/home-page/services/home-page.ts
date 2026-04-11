@@ -8,6 +8,6 @@ export class HomePage {
 	http = inject(HttpClient);
 
 	getBooks() {
-		return this.http.get('books')
+		return this.http.get('api/books');
 	}
 }

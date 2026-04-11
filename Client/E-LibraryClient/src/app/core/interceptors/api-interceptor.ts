@@ -4,7 +4,7 @@ import { StorageService } from '../services/storage';
 import { catchError, throwError } from 'rxjs';
 
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
-	const apiUrl = 'http://localhost:8082/api/';
+	const apiUrl = 'http://localhost:8082/';
 	const storageService = inject(StorageService);
 	const token = storageService.get<any>('currentUser')?.token;
 

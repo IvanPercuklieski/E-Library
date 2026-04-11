@@ -1,4 +1,4 @@
-import { authGuard } from './core/guards/auth-guard';
+import { roleGuard } from './core/guards/role-guard';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -12,13 +12,18 @@ export const routes: Routes = [
 		loadChildren: () => import('./features/home-page/home-page.routes').then((m) => m.HOME_PAGE_ROUTES),
 	},
 	{
-		path: 'auth',
-		loadChildren: () => import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
-		canActivate: [authGuard],
+		path: 'books',
+		loadChildren: () => import('./features/books/books.routes').then((m) => m.BOOKS_ROUTES),
+	},
+	{
+		path: 'resources',
+		loadChildren: () => import('./features/admin-panel/admin-panel.routes').then((m) => m.ADMIN_PANEL_ROUTES),
+		canActivate: [roleGuard(['ADMIN', 'BASIC'])],
 	},
 	{
 		path: 'admin-panel',
-		loadChildren: () => import('./features/admin-panel/admin-panel.routes').then((m) => m.ADMIN_PANEL_ROUTES),
+		redirectTo: 'resources',
+		pathMatch: 'full',
 	},
 	{
 		path: 'seating',

@@ -1,2 +1,16 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+:root {
+	--library-surface: #fbf7f0;
+	--library-surface-soft: #f1ebd8;
+	--library-surface-strong: #ffffff;
+	--library-border: #dccba9;
+	--library-primary: #1e3a34; /* Deep hunter green */
+	--library-primary-soft: #2e5950;
+	--library-accent: #8b3a33; /* Deep burgundy/leather */
+	--library-text: #2f2a24;
+	--library-text-soft: #635b52;
+	--library-shadow: rgba(30, 58, 52, 0.12);
+	--library-glow: rgba(139, 58, 51, 0.15);
+}

@@ -35,3 +35,89 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 // @import "@ionic/angular/css/palettes/dark.system.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@500;700&family=Nunito:wght@400;500;600&display=swap');
+
+html,
+body,
+ion-backdrop,
+ion-app,
+ion-content {
+	font-family: 'Nunito', 'Segoe UI', Tahoma, sans-serif;
+	color: var(--library-text);
+	background:
+		radial-gradient(circle at 18% 15%, rgba(61, 86, 119, 0.10), transparent 28%),
+		radial-gradient(circle at 85% 12%, rgba(109, 133, 118, 0.10), transparent 24%),
+		linear-gradient(180deg, #f7f6f2 0%, #ece9e1 100%);
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+}
+
+ion-content::part(background) {
+	background: transparent;
+}
+
+ion-card,
+.surface-card {
+	backdrop-filter: blur(18px);
+	-webkit-backdrop-filter: blur(18px);
+	background: linear-gradient(145deg, var(--library-surface), var(--library-surface-soft));
+	border: 1px solid var(--library-border);
+	box-shadow: 0 16px 40px var(--library-shadow);
+	border-radius: 22px;
+}
+
+ion-button {
+	--border-radius: 999px;
+	--box-shadow: none;
+	font-weight: 600;
+	letter-spacing: 0.2px;
+	transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background 0.2s ease;
+
+	&:active {
+		transform: scale(0.96);
+	}
+}
+
+ion-item {
+	--background: transparent;
+}
+
+ion-input,
+ion-select,
+ion-textarea {
+	--highlight-color-focused: var(--library-primary);
+	--highlight-color: var(--library-primary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.logo {
+	font-family: 'Merriweather', Georgia, serif;
+}
+
+@keyframes fadeUp {
+	0% { opacity: 0; transform: translateY(24px); }
+	100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeDown {
+	0% { opacity: 0; transform: translateY(-20px); }
+	100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+	0% { opacity: 0; filter: blur(4px); }
+	100% { opacity: 1; filter: blur(0); }
+}
+
+.animate-fade-up {
+	animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -1,1 +1,154 @@
-<p>admin-panel works!</p>
+<ion-header>
+	<app-header></app-header>
+</ion-header>
+
+<ion-content>
+	<div class="resources-container">
+		<div class="resources-toolbar">
+			<ion-item class="resource-select-item" lines="none">
+				<ion-label>Resource</ion-label>
+				<ion-select [value]="selectedResource()" (ionChange)="onResourceChange($event)">
+					@for (option of resourceOptions; track option.value) {
+						<ion-select-option [value]="option.value">{{ option.label }}</ion-select-option>
+					}
+				</ion-select>
+			</ion-item>
+
+			<ion-button class="create-button" (click)="openCreate()">Create</ion-button>
+		</div>
+
+		<div class="table-card">
+			@if (isLoading()) {
+				<div class="empty-state">Loading...</div>
+			} @else if (rows().length === 0) {
+				<div class="empty-state">No records found for selected resource.</div>
+			} @else {
+				<div class="table-wrap">
+					<table>
+						<thead>
+							<tr>
+								<th>#</th>
+								@for (column of getColumns(); track column.key) {
+									<th>{{ column.label }}</th>
+								}
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							@for (row of rows(); track $index) {
+								<tr>
+									<td>{{ $index + 1 }}</td>
+									@for (column of getColumns(); track column.key) {
+										<td>{{ getCellValue(row, column.key) }}</td>
+									}
+									<td class="actions-cell">
+										<ion-button size="small" fill="clear" color="medium" (click)="openEdit(row)" title="Edit">
+											<ion-icon name="create-outline" slot="icon-only"></ion-icon>
+										</ion-button>
+										<ion-button size="small" fill="clear" color="danger" (click)="deleteRow(row)" title="Delete">
+											<ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+										</ion-button>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</div>
+
+		<ion-modal [isOpen]="editorOpen()" (didDismiss)="closeEditor()">
+			<ng-template>
+				<ion-header>
+					<ion-toolbar class="modal-toolbar">
+						<ion-title>{{ editingId() ? 'Editing' : 'Adding' }} {{ selectedResource() | titlecase }}</ion-title>
+						<ion-buttons slot="end">
+							<ion-button (click)="closeEditor()">Close</ion-button>
+						</ion-buttons>
+					</ion-toolbar>
+				</ion-header>
+
+				<ion-content class="ion-padding modal-content">
+					<div class="editor-card">
+						<form [formGroup]="resourceForm" class="editor-form">
+					@if (selectedResource() === 'book' || selectedResource() === 'genre') {
+						<ion-item lines="none">
+							<ion-label position="stacked">Title</ion-label>
+							<ion-input formControlName="title"></ion-input>
+						</ion-item>
+					}
+
+					@if (selectedResource() === 'book') {
+						<ion-item lines="none">
+							<ion-label position="stacked">Author</ion-label>
+							<ion-select interface="popover" formControlName="authorId">
+								@for (author of authors(); track author.id) {
+									<ion-select-option [value]="author.id">{{ author.name }}</ion-select-option>
+								}
+							</ion-select>
+						</ion-item>
+
+						<ion-item lines="none">
+							<ion-label position="stacked">Genres</ion-label>
+							<ion-select
+								interface="popover"
+								formControlName="genreIds"
+								multiple="true"
+								(ionChange)="onGenreSelectChange($event)"
+							>
+								@for (genre of genres(); track genre.id) {
+									<ion-select-option [value]="genre.id">{{ genre.name }}</ion-select-option>
+								}
+							</ion-select>
+						</ion-item>
+
+						<ion-item lines="none">
+							<ion-label position="stacked">Publication Date</ion-label>
+							<ion-input type="date" formControlName="pubDate"></ion-input>
+						</ion-item>
+
+						<ion-item lines="none">
+							<ion-label position="stacked">Description</ion-label>
+							<ion-textarea formControlName="description" autoGrow="true"></ion-textarea>
+						</ion-item>
+
+						<ion-item lines="none">
+							<ion-label position="stacked">Number of Books</ion-label>
+							<ion-input type="number" formControlName="numBooks"></ion-input>
+						</ion-item>
+					}
+
+					@if (selectedResource() === 'author' || selectedResource() === 'user') {
+						<ion-item lines="none">
+							<ion-label position="stacked">Name</ion-label>
+							<ion-input formControlName="name"></ion-input>
+						</ion-item>
+					}
+
+					@if (selectedResource() === 'user') {
+						<ion-item lines="none">
+							<ion-label position="stacked">Surname</ion-label>
+							<ion-input formControlName="surname"></ion-input>
+						</ion-item>
+
+						<ion-item lines="none">
+							<ion-label position="stacked">Email</ion-label>
+							<ion-input type="email" formControlName="email"></ion-input>
+						</ion-item>
+					}
+						</form>
+					</div>
+				</ion-content>
+
+				<ion-footer>
+					<ion-toolbar class="modal-toolbar modal-footer-toolbar">
+						<div class="modal-footer-actions">
+							<ion-button class="modal-cancel-btn" fill="outline" (click)="closeEditor()">Cancel</ion-button>
+							<ion-button class="modal-save-btn" (click)="save()">Save</ion-button>
+						</div>
+					</ion-toolbar>
+				</ion-footer>
+			</ng-template>
+		</ion-modal>
+	</div>
+</ion-content>

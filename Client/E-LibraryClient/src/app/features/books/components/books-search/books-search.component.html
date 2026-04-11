@@ -1,1 +1,63 @@
-<p>books-search works!</p>
+<ion-header>
+	<app-header></app-header>
+</ion-header>
+
+<ion-content>
+	<div class="books-page">
+		<div class="filters-panel">
+			<ion-item lines="none" class="filter-item search-item">
+				<ion-label position="stacked">Search Books</ion-label>
+				<ion-input
+					[debounce]="300"
+					[clearInput]="true"
+					placeholder="Title, author, description or genre"
+					(ionInput)="onSearchChange($event)"
+				></ion-input>
+			</ion-item>
+
+			<ion-item lines="none" class="filter-item">
+				<ion-label position="stacked">Author</ion-label>
+				<ion-select
+					interface="popover"
+					multiple="true"
+					[value]="selectedAuthorIds()"
+					placeholder="All authors"
+					(ionChange)="onAuthorChange($event)"
+				>
+					@for (author of authors(); track author.id) {
+						<ion-select-option [value]="author.id">{{ author.name }}</ion-select-option>
+					}
+				</ion-select>
+			</ion-item>
+
+			<ion-item lines="none" class="filter-item">
+				<ion-label position="stacked">Genre</ion-label>
+				<ion-select
+					interface="popover"
+					multiple="true"
+					[value]="selectedGenreIds()"
+					placeholder="All genres"
+					(ionChange)="onGenreChange($event)"
+				>
+					@for (genre of genres(); track genre.id) {
+						<ion-select-option [value]="genre.id">{{ getGenreLabel(genre) }}</ion-select-option>
+					}
+				</ion-select>
+			</ion-item>
+
+			<ion-button fill="outline" class="clear-btn" (click)="clearFilters()">Clear Filters</ion-button>
+		</div>
+
+		@if (isLoading()) {
+			<div class="state-card">Loading books...</div>
+		} @else if (filteredBooks().length === 0) {
+			<div class="state-card">No books match your filters.</div>
+		} @else {
+			<div class="books-grid">
+				@for (book of filteredBooks(); track book.id) {
+					<app-book-card [book]="book"></app-book-card>
+				}
+			</div>
+		}
+	</div>
+</ion-content>

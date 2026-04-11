@@ -2,13 +2,12 @@
 	<app-header title="Login"></app-header>
 </ion-header>
 
-<ion-content class="ion-padding login-page">
-	<div style="max-width: 500px; margin: 0 auto">
+<ion-content class="auth-page">
+	<div class="auth-shell ion-padding">
 		<ion-card>
 			<ion-card-header>
-				<ion-card-title class="ion-text-center"
-					>Login is only needed for employees of the library</ion-card-title
-				>
+				<ion-card-title class="ion-text-center">Welcome Back</ion-card-title>
+				<p class="auth-subtitle ion-text-center">Employee access for managing resources and rooms.</p>
 			</ion-card-header>
 
 			<ion-card-content>
@@ -37,7 +36,7 @@
 						>Login</ion-button
 					>
 
-					<div class="register-link ion-text-center ion-margin-top">
+					<div class="auth-link ion-text-center ion-margin-top">
 						<ion-button fill="clear" size="small" (click)="goToRegister()" [disabled]="isSubmitting()">
 							Don't have an account? Register
 						</ion-button>

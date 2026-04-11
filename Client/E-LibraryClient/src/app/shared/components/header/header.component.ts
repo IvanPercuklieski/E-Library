@@ -1,4 +1,5 @@
 import { Component, computed, inject, input, signal, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertController, IonicModule, PopoverController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { Auth } from 'src/app/features/auth/services/auth';
@@ -8,7 +9,7 @@ import { ToastService } from '../../services/toast';
 	selector: 'app-header',
 	templateUrl: './header.component.html',
 	styleUrls: ['./header.component.scss'],
-	imports: [IonicModule],
+	imports: [IonicModule, ReactiveFormsModule],
 })
 export class HeaderComponent {
 	private authService = inject(Auth);
@@ -18,9 +19,18 @@ export class HeaderComponent {
 
 	title = input<string>('Library App');
 	isLoggedIn = computed(() => this.authService.isAuthenticated());
-	currentUser: any = this.authService.getCurrentUser();
+	currentUser = computed(() => this.authService.getCurrentUser());
+	canAccessResources = computed(() => this.authService.hasAnyRole(['ADMIN', 'BASIC']));
 	isProfileMenuOpen = signal(false);
+	isLoginModalOpen = signal(false);
+	loginError = signal<string | null>(null);
+	isLoggingIn = signal(false);
 	@ViewChild('profileMenuPopover') profileMenuPopover!: HTMLIonPopoverElement;
+
+	loginForm = new FormGroup({
+		username: new FormControl('', Validators.required),
+		password: new FormControl('', Validators.required),
+	});
 
 	async onLogout() {
 		const alert = await this.alertConteller.create({
@@ -45,11 +55,10 @@ export class HeaderComponent {
 	}
 
 	onLoginBtnClick() {
-		this.router.navigate(['/auth/login']);
-	}
-
-	onRegisterBtnClick() {
-		this.router.navigate(['/auth/register']);
+		this.isProfileMenuOpen.set(false);
+		this.loginError.set(null);
+		this.loginForm.reset();
+		this.isLoginModalOpen.set(true);
 	}
 
 	openProfileMenuPopover(e: Event) {
@@ -62,10 +71,45 @@ export class HeaderComponent {
 	}
 
 	onAdminPanelClick() {
-		this.router.navigate(['/admin-panel']);
+		this.router.navigate(['/resources']);
 	}
 
 	onSeatingClick() {
+		this.router.navigate(['/books']);
+	}
+
+	onBooksClick() {
 		this.router.navigate(['/seating']);
+	}
+
+	closeLoginModal() {
+		this.isLoginModalOpen.set(false);
+	}
+
+	submitLogin() {
+		if (this.loginForm.invalid) {
+			this.loginError.set('Username and password are required.');
+			return;
+		}
+
+		this.isLoggingIn.set(true);
+		this.loginError.set(null);
+
+		this.authService
+			.login({
+				username: this.loginForm.value.username ?? '',
+				password: this.loginForm.value.password ?? '',
+			})
+			.subscribe({
+				next: () => {
+					this.isLoggingIn.set(false);
+					this.isLoginModalOpen.set(false);
+					this.toastsService.show('Logged in successfully');
+				},
+				error: () => {
+					this.isLoggingIn.set(false);
+					this.loginError.set('Login failed. Please check your credentials.');
+				},
+			});
 	}
 }

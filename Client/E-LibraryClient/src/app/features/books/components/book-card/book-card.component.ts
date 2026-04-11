@@ -1,23 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonBadge } from '@ionic/angular/standalone';
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-
-export interface Book {
-	id: number;
-	title: string;
-	authorName: string;
-	genreNames: string[];
-	description: string;
-	totalBookCopies: number;
-	availableBookCopies: number;
-	pubDate: string;
-}
+import { Book } from 'src/app/core/models/modeli';
 
 @Component({
 	selector: 'app-book-card',
 	templateUrl: './book-card.component.html',
 	styleUrls: ['./book-card.component.scss'],
-	imports: [IonCardTitle, IonCard, IonCardHeader, IonCardContent, IonBadge, CommonModule],
+	imports: [IonCardTitle, IonCard, IonCardHeader, IonCardContent, CommonModule],
 })
 export class BookCardComponent implements OnInit {
 	@Input() book!: Book;

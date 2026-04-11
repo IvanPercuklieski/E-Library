@@ -2,18 +2,73 @@
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	padding: 10px 0;
 }
 
 .toolbar-inner {
-	width: 90%;
-	max-width: 1920px;
+	width: min(1320px, calc(100% - 28px));
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	padding: 10px 16px;
+	border: 1px solid var(--library-border);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.55);
+	backdrop-filter: blur(16px);
+	-webkit-backdrop-filter: blur(16px);
+	box-shadow: 0 12px 30px var(--library-shadow);
+	opacity: 0;
+	animation: fadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .logo {
-	font-weight: bold;
-	font-size: larger;
+	font-weight: 700;
+	font-size: 20px;
 	cursor: pointer;
+	color: var(--library-primary);
+	font-family: 'Merriweather', Georgia, serif;
+	letter-spacing: 0.3px;
+	transition: color 0.2s ease;
+
+	&:hover {
+		color: var(--library-primary-soft);
+	}
+}
+
+ion-button {
+	--color: var(--library-primary);
+	--border-radius: 999px;
+	--padding-start: 14px;
+	--padding-end: 14px;
+	transition: transform 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+	&:hover {
+		--color: var(--library-primary-soft);
+		transform: translateY(-1px);
+	}
+}
+
+.login-modal-note {
+	margin: 0 0 14px;
+	color: var(--library-text-soft);
+	font-size: 14px;
+}
+
+.login-modal-form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	ion-item {
+		--background: rgba(255, 255, 255, 0.7);
+		--border-radius: 14px;
+		border: 1px solid var(--library-border);
+		backdrop-filter: blur(12px);
+	}
+
+	ion-button {
+		--background: var(--library-primary);
+		--background-hover: var(--library-primary-soft);
+		--color: #fff;
+	}
 }
