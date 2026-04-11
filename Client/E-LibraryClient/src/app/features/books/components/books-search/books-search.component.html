@@ -5,47 +5,56 @@
 <ion-content>
 	<div class="books-page">
 		<div class="filters-panel">
-			<ion-item lines="none" class="filter-item search-item">
-				<ion-label position="stacked">Search Books</ion-label>
-				<ion-input
-					[debounce]="300"
-					[clearInput]="true"
-					placeholder="Title, author, description or genre"
-					(ionInput)="onSearchChange($event)"
-				></ion-input>
-			</ion-item>
+			<div class="filters-header-row">
+				<div class="filters-title-wrap">
+					<h2>Find Your Next Book</h2>
+					<p>Use quick filters to narrow results by title, author, and genre.</p>
+				</div>
+				<ion-button fill="outline" class="clear-btn" (click)="clearFilters()">Clear Filters</ion-button>
+			</div>
 
-			<ion-item lines="none" class="filter-item">
-				<ion-label position="stacked">Author</ion-label>
-				<ion-select
-					interface="popover"
-					multiple="true"
-					[value]="selectedAuthorIds()"
-					placeholder="All authors"
-					(ionChange)="onAuthorChange($event)"
-				>
-					@for (author of authors(); track author.id) {
-						<ion-select-option [value]="author.id">{{ author.name }}</ion-select-option>
-					}
-				</ion-select>
-			</ion-item>
+			<div class="filters-grid">
+				<div class="filter-field filter-search">
+					<label>Search Books</label>
+					<ion-searchbar
+						[debounce]="300"
+						[value]="searchQuery()"
+						showClearButton="focus"
+						placeholder="Title, author, description or genre"
+						(ionInput)="onSearchChange($event)"
+					></ion-searchbar>
+				</div>
 
-			<ion-item lines="none" class="filter-item">
-				<ion-label position="stacked">Genre</ion-label>
-				<ion-select
-					interface="popover"
-					multiple="true"
-					[value]="selectedGenreIds()"
-					placeholder="All genres"
-					(ionChange)="onGenreChange($event)"
-				>
-					@for (genre of genres(); track genre.id) {
-						<ion-select-option [value]="genre.id">{{ getGenreLabel(genre) }}</ion-select-option>
-					}
-				</ion-select>
-			</ion-item>
+				<div class="filter-field">
+					<label>Author</label>
+					<ion-select
+						interface="popover"
+						multiple="true"
+						[value]="selectedAuthorIds()"
+						placeholder="All authors"
+						(ionChange)="onAuthorChange($event)"
+					>
+						@for (author of authors(); track author.id) {
+							<ion-select-option [value]="author.id">{{ author.name }}</ion-select-option>
+						}
+					</ion-select>
+				</div>
 
-			<ion-button fill="outline" class="clear-btn" (click)="clearFilters()">Clear Filters</ion-button>
+				<div class="filter-field">
+					<label>Genre</label>
+					<ion-select
+						interface="popover"
+						multiple="true"
+						[value]="selectedGenreIds()"
+						placeholder="All genres"
+						(ionChange)="onGenreChange($event)"
+					>
+						@for (genre of genres(); track genre.id) {
+							<ion-select-option [value]="genre.id">{{ getGenreLabel(genre) }}</ion-select-option>
+						}
+					</ion-select>
+				</div>
+			</div>
 		</div>
 
 		@if (isLoading()) {

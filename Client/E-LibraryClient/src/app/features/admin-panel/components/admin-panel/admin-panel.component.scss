@@ -132,6 +132,25 @@ td {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(260px, 1fr));
 	gap: 10px;
+
+	ion-item {
+		--background: transparent;
+		--padding-start: 0;
+		--inner-padding-end: 0;
+		--border-color: var(--library-border);
+		--highlight-color-focused: var(--library-primary);
+		--min-height: 62px;
+	}
+
+	ion-input,
+	ion-select,
+	ion-textarea {
+		width: 100%;
+	}
+}
+
+.form-field-item {
+	width: 100%;
 }
 
 .modal-footer-actions {

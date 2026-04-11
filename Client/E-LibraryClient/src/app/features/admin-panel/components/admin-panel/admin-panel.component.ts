@@ -6,12 +6,13 @@ import { addIcons } from 'ionicons';
 import { createOutline, trashOutline } from 'ionicons/icons';
 import { Observable } from 'rxjs';
 import { catchError, of } from 'rxjs';
-import { Author, Book, Genre, LibraryUser } from 'src/app/core/models/modeli';
+import { Author, Book, Employee, EmployeeRegisterDto, Genre, LibraryUser } from 'src/app/core/models/modeli';
+import { Auth } from 'src/app/features/auth/services/auth';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 import { ToastService } from 'src/app/shared/services/toast';
 import { ResourceManagerService } from '../../services/admin-panel';
 
-type ResourceType = 'book' | 'genre' | 'author' | 'user';
+type ResourceType = 'book' | 'genre' | 'author' | 'user' | 'employee';
 
 interface ResourceOption {
 	value: ResourceType;
@@ -32,6 +33,7 @@ interface ResourceColumn {
 export class AdminPanelComponent implements OnInit {
 	private resourcesService = inject(ResourceManagerService);
 	private toastService = inject(ToastService);
+	private authService = inject(Auth);
 
 	constructor() {
 		addIcons({ createOutline, trashOutline });
@@ -45,9 +47,11 @@ export class AdminPanelComponent implements OnInit {
 	];
 
 	selectedResource = signal<ResourceType>('book');
-	rows = signal<Array<Book | Genre | Author | LibraryUser>>([]);
+	rows = signal<Array<Book | Genre | Author | LibraryUser | Employee>>([]);
 	authors = signal<Author[]>([]);
 	genres = signal<Genre[]>([]);
+	users = signal<LibraryUser[]>([]);
+
 	isLoading = signal(false);
 	editorOpen = signal(false);
 	editingId = signal<number | null>(null);
@@ -62,9 +66,16 @@ export class AdminPanelComponent implements OnInit {
 		name: new FormControl(''),
 		surname: new FormControl(''),
 		email: new FormControl(''),
+		userId: new FormControl<number | null>(null),
+		username: new FormControl(''),
+		password: new FormControl(''),
+		repeatPassword: new FormControl(''),
 	});
 
 	ngOnInit(): void {
+		if (this.authService.hasAnyRole(['ADMIN'])) {
+			this.resourceOptions.push({ value: 'employee', label: 'Employees' });
+		}
 		this.loadReferenceData();
 		this.loadCurrentResource();
 	}
@@ -88,7 +99,7 @@ export class AdminPanelComponent implements OnInit {
 		this.editingId.set(null);
 	}
 
-	openEdit(row: Book | Genre | Author | LibraryUser) {
+	openEdit(row: Book | Genre | Author | LibraryUser | Employee) {
 		this.editorOpen.set(true);
 		this.editingId.set((row as any).id);
 		const resource = this.selectedResource();
@@ -116,6 +127,17 @@ export class AdminPanelComponent implements OnInit {
 		if (resource === 'author') {
 			this.resourceForm.patchValue({
 				name: (row as Author).name,
+			});
+			return;
+		}
+
+		if (resource === 'employee') {
+			const emp = row as Employee;
+			const linkedUser = this.getUserById(emp.userId);
+			this.resourceForm.patchValue({
+				username: emp.username,
+				email: linkedUser?.email ?? emp.email ?? '',
+				userId: emp.userId
 			});
 			return;
 		}
@@ -175,6 +197,38 @@ export class AdminPanelComponent implements OnInit {
 			return;
 		}
 
+		if (resource === 'employee') {
+			const selectedUser = this.getUserById(Number(this.resourceForm.value.userId ?? 0));
+			const payload: EmployeeRegisterDto = {
+				userId: Number(this.resourceForm.value.userId),
+				username: this.resourceForm.value.username ?? '',
+				password: this.resourceForm.value.password ?? '',
+				repeatPassword: this.resourceForm.value.repeatPassword ?? '',
+				email: selectedUser?.email ?? this.resourceForm.value.email ?? ''
+			};
+			if (!payload.userId || !payload.username || !payload.password || !payload.repeatPassword) {
+				this.toastService.show('Fill all required Employee fields', 3000, 'warning');
+				return;
+			}
+
+			if (!payload.email) {
+				this.toastService.show('Select a user with an email', 3000, 'warning');
+				return;
+			}
+
+			if (payload.password !== payload.repeatPassword) {
+				this.toastService.show('Passwords do not match', 3000, 'warning');
+				return;
+			}
+
+			const request = this.resourcesService.createEmployee(payload);
+			request.subscribe({
+				next: () => this.handleSaveSuccess('Employee registered successfully'),
+				error: () => this.toastService.show('Employee registration failed', 3000, 'danger'),
+			});
+			return;
+		}
+
 		if (resource === 'author') {
 			const payload = { name: this.resourceForm.value.name ?? '' };
 			if (!payload.name.trim()) {
@@ -214,13 +268,18 @@ export class AdminPanelComponent implements OnInit {
 		});
 	}
 
-	deleteRow(row: Book | Genre | Author | LibraryUser) {
+	deleteRow(row: Book | Genre | Author | LibraryUser | Employee) {
 		const rowId = (row as any).id;
 		if (!rowId) {
 			return;
 		}
 
 		const resource = this.selectedResource();
+		if (resource === 'employee') {
+			this.toastService.show('Cannot delete employees', 3000, 'warning');
+			return;
+		}
+
 		const confirmed = window.confirm('Are you sure you want to delete this record?');
 		if (!confirmed) {
 			return;
@@ -265,6 +324,14 @@ export class AdminPanelComponent implements OnInit {
 			return [{ key: 'name', label: 'Name' }];
 		}
 
+		if (this.selectedResource() === 'employee') {
+			return [
+				{ key: 'username', label: 'Username' },
+				{ key: 'email', label: 'Email' },
+				{ key: 'role', label: 'Role' },
+			];
+		}
+
 		return [
 			{ key: 'name', label: 'Name' },
 			{ key: 'surname', label: 'Surname' },
@@ -273,6 +340,16 @@ export class AdminPanelComponent implements OnInit {
 	}
 
 	getCellValue(row: any, key: string): string | number {
+		if (this.selectedResource() === 'employee') {
+			if (key === 'email') {
+				return this.getUserById(Number(row.userId))?.email ?? row.email ?? '-';
+			}
+
+			if (key === 'role') {
+				return row.role ?? '-';
+			}
+		}
+
 		if (key === 'genreNames') {
 			return (row.genreNames ?? []).join(', ');
 		}
@@ -282,6 +359,15 @@ export class AdminPanelComponent implements OnInit {
 		}
 
 		return row[key] ?? '-';
+	}
+
+	onEmployeeUserChange(event: CustomEvent) {
+		const userId = Number(event.detail.value ?? 0);
+		const user = this.getUserById(userId);
+		this.resourceForm.patchValue({
+			userId: userId || null,
+			email: user?.email ?? '',
+		});
 	}
 
 	onGenreSelectChange(event: CustomEvent) {
@@ -309,26 +395,37 @@ export class AdminPanelComponent implements OnInit {
 			.getGenres()
 			.pipe(catchError(() => of([])))
 			.subscribe((genres) => this.genres.set(genres));
+		
+		this.resourcesService
+			.getUsers()
+			.pipe(catchError(() => of([])))
+			.subscribe((users) => this.users.set(users));
 	}
 
 	private loadCurrentResource() {
 		this.isLoading.set(true);
-		let request: Observable<Array<Book | Genre | Author | LibraryUser>>;
+		let request: Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
 
 		if (this.selectedResource() === 'book') {
-			request = this.resourcesService.getBooks() as Observable<Array<Book | Genre | Author | LibraryUser>>;
+			request = this.resourcesService.getBooks() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
 		} else if (this.selectedResource() === 'genre') {
-			request = this.resourcesService.getGenres() as Observable<Array<Book | Genre | Author | LibraryUser>>;
+			request = this.resourcesService.getGenres() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
 		} else if (this.selectedResource() === 'author') {
-			request = this.resourcesService.getAuthors() as Observable<Array<Book | Genre | Author | LibraryUser>>;
+			request = this.resourcesService.getAuthors() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+		} else if (this.selectedResource() === 'employee') {
+			request = this.resourcesService.getEmployees() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
 		} else {
-			request = this.resourcesService.getUsers() as Observable<Array<Book | Genre | Author | LibraryUser>>;
+			request = this.resourcesService.getUsers() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
 		}
 
 		request.pipe(catchError(() => of([]))).subscribe((rows) => {
 			this.rows.set(rows);
 			this.isLoading.set(false);
 		});
+	}
+
+	private getUserById(userId: number) {
+		return this.users().find((user) => user.id === userId);
 	}
 
 	private resetForm() {
@@ -342,6 +439,10 @@ export class AdminPanelComponent implements OnInit {
 			name: '',
 			surname: '',
 			email: '',
+			userId: null,
+			username: '',
+			password: '',
+			repeatPassword: '',
 		});
 	}
 }

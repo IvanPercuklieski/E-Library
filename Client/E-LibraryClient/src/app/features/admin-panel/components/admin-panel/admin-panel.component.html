@@ -72,14 +72,14 @@
 					<div class="editor-card">
 						<form [formGroup]="resourceForm" class="editor-form">
 					@if (selectedResource() === 'book' || selectedResource() === 'genre') {
-						<ion-item lines="none">
+							<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Title</ion-label>
 							<ion-input formControlName="title"></ion-input>
 						</ion-item>
 					}
 
 					@if (selectedResource() === 'book') {
-						<ion-item lines="none">
+							<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Author</ion-label>
 							<ion-select interface="popover" formControlName="authorId">
 								@for (author of authors(); track author.id) {
@@ -88,7 +88,7 @@
 							</ion-select>
 						</ion-item>
 
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Genres</ion-label>
 							<ion-select
 								interface="popover"
@@ -102,38 +102,71 @@
 							</ion-select>
 						</ion-item>
 
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Publication Date</ion-label>
 							<ion-input type="date" formControlName="pubDate"></ion-input>
 						</ion-item>
 
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Description</ion-label>
 							<ion-textarea formControlName="description" autoGrow="true"></ion-textarea>
 						</ion-item>
 
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Number of Books</ion-label>
 							<ion-input type="number" formControlName="numBooks"></ion-input>
 						</ion-item>
 					}
 
 					@if (selectedResource() === 'author' || selectedResource() === 'user') {
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Name</ion-label>
 							<ion-input formControlName="name"></ion-input>
 						</ion-item>
 					}
 
 					@if (selectedResource() === 'user') {
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Surname</ion-label>
 							<ion-input formControlName="surname"></ion-input>
 						</ion-item>
 
-						<ion-item lines="none">
+						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Email</ion-label>
 							<ion-input type="email" formControlName="email"></ion-input>
+						</ion-item>
+					}
+					
+					@if (selectedResource() === 'employee') {
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">User Source</ion-label>
+							<ion-select interface="popover" formControlName="userId" (ionChange)="onEmployeeUserChange($event)">
+								@for (user of users(); track user.id) {
+									<ion-select-option [value]="user.id">
+										{{ user.name }} {{ user.surname }}
+									</ion-select-option>
+								}
+							</ion-select>
+						</ion-item>
+
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">Username</ion-label>
+							<ion-input formControlName="username"></ion-input>
+						</ion-item>
+
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">Email</ion-label>
+							<ion-input type="email" formControlName="email" readonly="true"></ion-input>
+						</ion-item>
+
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">Password</ion-label>
+							<ion-input type="password" formControlName="password"></ion-input>
+						</ion-item>
+
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">Repeat Password</ion-label>
+							<ion-input type="password" formControlName="repeatPassword"></ion-input>
 						</ion-item>
 					}
 						</form>

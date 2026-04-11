@@ -5,6 +5,8 @@ import {
 	AuthorDto,
 	Book,
 	CreateOrUpdateBookDto,
+	Employee,
+	EmployeeRegisterDto,
 	Genre,
 	GenreDto,
 	LibraryUser,
@@ -84,5 +86,13 @@ export class ResourceManagerService {
 
 	deleteUser(userId: number) {
 		return this.http.delete<void>(`api/user/delete/${userId}`);
+	}
+
+	getEmployees() {
+		return this.http.get<Employee[]>('api/employee/all');
+	}
+
+	createEmployee(payload: EmployeeRegisterDto) {
+		return this.http.post<Employee>('api/employee/register', payload);
 	}
 }

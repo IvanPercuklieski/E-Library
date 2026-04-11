@@ -37,7 +37,7 @@
 					</ng-template>
 				</ion-popover>
 
-				<ion-modal [isOpen]="isLoginModalOpen()" (didDismiss)="closeLoginModal()">
+				<ion-modal class="login-modal" [isOpen]="isLoginModalOpen()" (didDismiss)="closeLoginModal()">
 					<ng-template>
 						<ion-header>
 							<ion-toolbar>
@@ -47,16 +47,16 @@
 								</ion-buttons>
 							</ion-toolbar>
 						</ion-header>
-						<ion-content class="ion-padding">
+						<div class="login-modal-body ion-padding">
 							<p class="login-modal-note">Only employees need to log in.</p>
 
 							<form [formGroup]="loginForm" (ngSubmit)="submitLogin()" class="login-modal-form">
-								<ion-item lines="none">
+								<ion-item lines="full" class="login-modal-field">
 									<ion-label position="stacked">Username</ion-label>
 									<ion-input formControlName="username"></ion-input>
 								</ion-item>
 
-								<ion-item lines="none">
+								<ion-item lines="full" class="login-modal-field">
 									<ion-label position="stacked">Password</ion-label>
 									<ion-input type="password" formControlName="password"></ion-input>
 								</ion-item>
@@ -67,10 +67,10 @@
 
 								<ion-button type="submit" expand="block" [disabled]="isLoggingIn()">Login</ion-button>
 							</form>
-						</ion-content>
+						</div>
 					</ng-template>
 				</ion-modal>
 			</ion-buttons>
 		</div>
-	</div>
+						</div>
 </ion-toolbar>

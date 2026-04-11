@@ -57,3 +57,19 @@ export interface LibraryUserDto {
 	surname: string;
 	email: string;
 }
+
+export interface Employee {
+	id: number;
+	userId: number;
+	username: string;
+	role: string;
+	email?: string;
+}
+
+export interface EmployeeRegisterDto {
+	userId: number;
+	username: string;
+	password?: string;
+	repeatPassword?: string;
+	email: string;
+}

@@ -56,7 +56,7 @@ export class BooksSearchComponent implements OnInit {
 	}
 
 	onSearchChange(event: CustomEvent) {
-		this.searchQuery.set((event.detail.value ?? '').toLowerCase());
+		this.searchQuery.set(event.detail.value ?? '');
 	}
 
 	onAuthorChange(event: CustomEvent) {

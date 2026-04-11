@@ -45,7 +45,12 @@ export class HeaderComponent {
 					text: 'Logout',
 					handler: () => {
 						this.authService.logout();
+						this.isProfileMenuOpen.set(false);
+						this.isLoginModalOpen.set(false);
+						this.loginError.set(null);
+						this.resetLoginForm();
 						this.toastsService.show('Logged out successfully');
+						this.router.navigate(['/home']);
 					},
 				},
 			],
@@ -57,7 +62,7 @@ export class HeaderComponent {
 	onLoginBtnClick() {
 		this.isProfileMenuOpen.set(false);
 		this.loginError.set(null);
-		this.loginForm.reset();
+		this.resetLoginForm();
 		this.isLoginModalOpen.set(true);
 	}
 
@@ -84,6 +89,8 @@ export class HeaderComponent {
 
 	closeLoginModal() {
 		this.isLoginModalOpen.set(false);
+		this.loginError.set(null);
+		this.resetLoginForm();
 	}
 
 	submitLogin() {
@@ -104,6 +111,7 @@ export class HeaderComponent {
 				next: () => {
 					this.isLoggingIn.set(false);
 					this.isLoginModalOpen.set(false);
+					this.resetLoginForm();
 					this.toastsService.show('Logged in successfully');
 				},
 				error: () => {
@@ -111,5 +119,12 @@ export class HeaderComponent {
 					this.loginError.set('Login failed. Please check your credentials.');
 				},
 			});
+	}
+
+	private resetLoginForm() {
+		this.loginForm.reset({
+			username: '',
+			password: '',
+		});
 	}
 }
