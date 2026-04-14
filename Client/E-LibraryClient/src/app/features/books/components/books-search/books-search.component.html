@@ -4,57 +4,31 @@
 
 <ion-content>
 	<div class="books-page">
-		<div class="filters-panel">
-			<div class="filters-header-row">
-				<div class="filters-title-wrap">
-					<h2>Find Your Next Book</h2>
-					<p>Use quick filters to narrow results by title, author, and genre.</p>
-				</div>
-				<ion-button fill="outline" class="clear-btn" (click)="clearFilters()">Clear Filters</ion-button>
+		<div class="search-top-bar">
+			<div class="search-input-wrapper">
+				<ion-searchbar
+					[debounce]="300"
+					[value]="searchQuery()"
+					showClearButton="focus"
+					placeholder="Search title, author, or genre..."
+					(ionInput)="onSearchChange($event)"
+				></ion-searchbar>
 			</div>
+			
+			<ion-button fill="solid" class="filters-btn" (click)="openFilters()">
+				<ion-icon name="options-outline" slot="start"></ion-icon>
+				Filters
+				@if (activeFiltersCount() > 0) {
+					<ion-badge color="light" class="filters-badge">{{ activeFiltersCount() }}</ion-badge>
+				}
+			</ion-button>
 
-			<div class="filters-grid">
-				<div class="filter-field filter-search">
-					<label>Search Books</label>
-					<ion-searchbar
-						[debounce]="300"
-						[value]="searchQuery()"
-						showClearButton="focus"
-						placeholder="Title, author, description or genre"
-						(ionInput)="onSearchChange($event)"
-					></ion-searchbar>
-				</div>
-
-				<div class="filter-field">
-					<label>Author</label>
-					<ion-select
-						interface="popover"
-						multiple="true"
-						[value]="selectedAuthorIds()"
-						placeholder="All authors"
-						(ionChange)="onAuthorChange($event)"
-					>
-						@for (author of authors(); track author.id) {
-							<ion-select-option [value]="author.id">{{ author.name }}</ion-select-option>
-						}
-					</ion-select>
-				</div>
-
-				<div class="filter-field">
-					<label>Genre</label>
-					<ion-select
-						interface="popover"
-						multiple="true"
-						[value]="selectedGenreIds()"
-						placeholder="All genres"
-						(ionChange)="onGenreChange($event)"
-					>
-						@for (genre of genres(); track genre.id) {
-							<ion-select-option [value]="genre.id">{{ getGenreLabel(genre) }}</ion-select-option>
-						}
-					</ion-select>
-				</div>
-			</div>
+			@if (activeFiltersCount() > 0) {
+				<ion-button fill="clear" class="clear-btn" (click)="clearFilters()">
+					<ion-icon name="close-outline" slot="start"></ion-icon>
+					Clear
+				</ion-button>
+			}
 		</div>
 
 		@if (isLoading()) {
@@ -70,3 +44,97 @@
 		}
 	</div>
 </ion-content>
+
+<!-- Filters Modal -->
+<ion-modal [isOpen]="isFiltersOpen()" (didDismiss)="closeFilters()" class="filters-modal">
+	<ng-template>
+		<ion-header class="ion-no-border">
+			<ion-toolbar>
+				<ion-title>Filters</ion-title>
+				<ion-buttons slot="end">
+					<ion-button (click)="closeFilters()">Done</ion-button>
+				</ion-buttons>
+			</ion-toolbar>
+		</ion-header>
+
+		<ion-content class="ion-padding">
+			<ion-accordion-group>
+				<!-- Authors Accordion -->
+				<ion-accordion value="authors">
+					<ion-item slot="header" color="light">
+						<ion-label>Authors</ion-label>
+						@if (selectedAuthorIds().length > 0) {
+							<ion-badge color="primary" slot="end">{{ selectedAuthorIds().length }}</ion-badge>
+						}
+					</ion-item>
+					<div class="filters-list" slot="content">
+						<ion-searchbar
+							placeholder="Search authors..."
+							[debounce]="300"
+							(ionInput)="onAuthorSearchChange($event)"
+							[value]="authorSearchQuery()"
+						></ion-searchbar>
+						<ion-list lines="none">
+							@for (author of filteredAuthors(); track author.id) {
+								<ion-item>
+									<ion-checkbox
+										[checked]="selectedAuthorIds().includes(author.id)"
+										(ionChange)="toggleAuthor(author.id)"
+									>
+										{{ author.name }}
+									</ion-checkbox>
+								</ion-item>
+							} @empty {
+								<div class="empty-list">
+									@if (!authorSearchQuery()) {
+										Search to find and select authors...
+									} @else {
+										No authors found.
+									}
+								</div>
+							}
+						</ion-list>
+					</div>
+				</ion-accordion>
+
+				<!-- Genres Accordion -->
+				<ion-accordion value="genres">
+					<ion-item slot="header" color="light">
+						<ion-label>Genres</ion-label>
+						@if (selectedGenreIds().length > 0) {
+							<ion-badge color="primary" slot="end">{{ selectedGenreIds().length }}</ion-badge>
+						}
+					</ion-item>
+					<div class="filters-list" slot="content">
+						<ion-searchbar
+							placeholder="Search genres..."
+							[debounce]="300"
+							(ionInput)="onGenreSearchChange($event)"
+							[value]="genreSearchQuery()"
+						></ion-searchbar>
+						<ion-list lines="none">
+							@for (genre of filteredGenres(); track genre.id) {
+								<ion-item>
+									<ion-checkbox
+										[checked]="selectedGenreIds().includes(genre.id)"
+										(ionChange)="toggleGenre(genre.id)"
+									>
+										{{ getGenreLabel(genre) }}
+									</ion-checkbox>
+								</ion-item>
+							} @empty {
+								<div class="empty-list">
+									@if (!genreSearchQuery()) {
+										Search to find and select genres...
+									} @else {
+										No genres found.
+									}
+								</div>
+							}
+						</ion-list>
+					</div>
+				</ion-accordion>
+			</ion-accordion-group>
+		</ion-content>
+	</ng-template>
+</ion-modal>

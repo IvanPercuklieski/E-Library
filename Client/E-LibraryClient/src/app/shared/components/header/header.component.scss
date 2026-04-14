@@ -17,8 +17,7 @@
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
 	box-shadow: 0 12px 30px var(--library-shadow);
-	opacity: 0;
-	animation: fadeDown 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	opacity: 1;
 }
 
 .logo {

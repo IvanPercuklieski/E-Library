@@ -3,7 +3,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { createOutline, trashOutline } from 'ionicons/icons';
+import { createOutline, trashOutline, checkmarkOutline, closeOutline, closeCircleOutline, closeCircle } from 'ionicons/icons';
 import { Observable } from 'rxjs';
 import { catchError, of } from 'rxjs';
 import { Author, Book, Employee, EmployeeRegisterDto, Genre, LibraryUser } from 'src/app/core/models/modeli';
@@ -36,7 +36,7 @@ export class AdminPanelComponent implements OnInit {
 	private authService = inject(Auth);
 
 	constructor() {
-		addIcons({ createOutline, trashOutline });
+		addIcons({ createOutline, trashOutline, checkmarkOutline, closeOutline, closeCircleOutline, closeCircle });
 	}
 
 	resourceOptions: ResourceOption[] = [
@@ -55,6 +55,52 @@ export class AdminPanelComponent implements OnInit {
 	isLoading = signal(false);
 	editorOpen = signal(false);
 	editingId = signal<number | null>(null);
+
+	searchQuery = signal('');
+	authorSearchQuery = signal('');
+	genreSearchQuery = signal('');
+
+	showAuthorDropdown = signal(false);
+	showGenreDropdown = signal(false);
+
+	filteredRows = computed(() => {
+		const query = this.searchQuery().trim().toLowerCase();
+		const allRows = this.rows();
+		if (!query) return allRows;
+
+		const columns = this.getColumns();
+
+		return allRows.filter((row: any) => {
+			return columns.some(col => {
+				const cellValue = this.getCellValue(row, col.key);
+				return String(cellValue).toLowerCase().includes(query);
+			});
+		});
+	});
+
+	filteredAuthors = computed(() => {
+		const query = this.authorSearchQuery().trim().toLowerCase();
+		if (!query) return this.authors().slice(0, 50);
+		return this.authors().filter((a) => a.name.toLowerCase().includes(query)).slice(0, 50);
+	});
+
+	filteredGenres = computed(() => {
+		const query = this.genreSearchQuery().trim().toLowerCase();
+		if (!query) return this.genres().slice(0, 50);
+		return this.genres().filter((g) => g.name.toLowerCase().includes(query)).slice(0, 50);
+	});
+
+	selectedGenres() {
+		const ids = this.resourceForm.value.genreIds || [];
+		if (ids.length === 0) return [];
+		return this.genres().filter((g) => ids.includes(g.id));
+	}
+
+	selectedAuthorName() {
+		const id = this.resourceForm.value.authorId;
+		if (!id) return 'Select Author';
+		return this.authors().find((a) => a.id === id)?.name || 'Select Author';
+	}
 
 	resourceForm = new FormGroup({
 		title: new FormControl('', Validators.required),
@@ -84,6 +130,7 @@ export class AdminPanelComponent implements OnInit {
 		this.selectedResource.set(event.detail.value as ResourceType);
 		this.editorOpen.set(false);
 		this.editingId.set(null);
+		this.searchQuery.set('');
 		this.resetForm();
 		this.loadCurrentResource();
 	}
@@ -91,17 +138,70 @@ export class AdminPanelComponent implements OnInit {
 	openCreate() {
 		this.editorOpen.set(true);
 		this.editingId.set(null);
+		this.showAuthorDropdown.set(false);
+		this.showGenreDropdown.set(false);
+		this.authorSearchQuery.set('');
+		this.genreSearchQuery.set('');
 		this.resetForm();
 	}
 
 	closeEditor() {
 		this.editorOpen.set(false);
 		this.editingId.set(null);
+		this.showAuthorDropdown.set(false);
+		this.showGenreDropdown.set(false);
+	}
+
+	onSearchChange(event: CustomEvent) {
+		this.searchQuery.set(event.detail.value ?? '');
+	}
+
+	onAuthorSearchChange(event: CustomEvent) {
+		this.authorSearchQuery.set(event.detail.value ?? '');
+		this.showAuthorDropdown.set(true);
+	}
+
+	onGenreSearchChange(event: CustomEvent) {
+		this.genreSearchQuery.set(event.detail.value ?? '');
+		this.showGenreDropdown.set(true);
+	}
+
+	hideAuthorDropdown() {
+		setTimeout(() => this.showAuthorDropdown.set(false), 200);
+	}
+
+	hideGenreDropdown() {
+		setTimeout(() => this.showGenreDropdown.set(false), 200);
+	}
+
+	clearAuthor(event?: Event) {
+		if (event) {
+			event.stopPropagation();
+		}
+		this.resourceForm.patchValue({ authorId: null });
+		this.authorSearchQuery.set('');
+	}
+
+	selectAuthor(id: number) {
+		this.resourceForm.patchValue({ authorId: id });
+		this.authorSearchQuery.set(this.authors().find((a) => a.id === id)?.name || '');
+		this.showAuthorDropdown.set(false);
+	}
+
+	toggleGenre(id: number) {
+		const current = this.resourceForm.value.genreIds || [];
+		if (current.includes(id)) {
+			this.resourceForm.patchValue({ genreIds: current.filter((g) => g !== id) });
+		} else {
+			this.resourceForm.patchValue({ genreIds: [...current, id] });
+		}
 	}
 
 	openEdit(row: Book | Genre | Author | LibraryUser | Employee) {
 		this.editorOpen.set(true);
 		this.editingId.set((row as any).id);
+		this.showAuthorDropdown.set(false);
+		this.showGenreDropdown.set(false);
 		const resource = this.selectedResource();
 
 		if (resource === 'book') {
@@ -114,6 +214,8 @@ export class AdminPanelComponent implements OnInit {
 				description: book.description,
 				numBooks: book.numBooks ?? book.totalBookCopies,
 			});
+			this.authorSearchQuery.set(this.selectedAuthorName());
+			this.genreSearchQuery.set('');
 			return;
 		}
 

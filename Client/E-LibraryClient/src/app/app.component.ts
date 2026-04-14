@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
+import { filter } from 'rxjs';
 
-import { personCircle } from 'ionicons/icons';
+import { personCircle, optionsOutline, closeOutline, checkmarkOutline, closeCircle } from 'ionicons/icons';
 
-addIcons({ personCircle });
+addIcons({ personCircle, optionsOutline, closeOutline, checkmarkOutline, closeCircle });
 
 @Component({
 	selector: 'app-root',
@@ -16,5 +17,19 @@ addIcons({ personCircle });
 	imports: [CommonModule, IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-	constructor() {}
+	constructor(private router: Router) {
+		this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
+			window.scrollTo({ top: 0, behavior: 'auto' });
+
+			requestAnimationFrame(() => {
+				const activeContent = document.querySelector('ion-content') as
+					| (HTMLElement & { scrollToTop?: (duration?: number) => Promise<void> })
+					| null;
+
+				if (activeContent?.scrollToTop) {
+					activeContent.scrollToTop(0);
+				}
+			});
+		});
+	}
 }

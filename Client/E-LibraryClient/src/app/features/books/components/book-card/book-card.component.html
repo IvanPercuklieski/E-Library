@@ -1,4 +1,4 @@
-<ion-card [class.unavailable]="!isAvailable()">
+<ion-card [class.unavailable]="!isAvailable()" [routerLink]="['/books', book.id]" class="clickable-card">
 	<ion-card-header>
 		<ion-card-title class="book-title">{{ book.title }}</ion-card-title>
 		<div class="book-author">{{ book.authorName }}</div>

@@ -1,0 +1,121 @@
+.book-details-page {
+	padding: 16px;
+	max-width: 800px;
+	margin: 0 auto;
+
+	.loading-container {
+		display: flex;
+		justify-content: center;
+		padding: 40px;
+	}
+
+	.back-button-container {
+		margin-bottom: 16px;
+	}
+
+	.book-details-card {
+		margin: 0;
+		transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+		background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(247, 245, 240, 0.62));
+		border: 1px solid var(--library-border);
+		border-radius: 22px;
+		box-shadow: 0 12px 28px var(--library-shadow);
+		backdrop-filter: blur(14px);
+		-webkit-backdrop-filter: blur(14px);
+
+		&.unavailable {
+			opacity: 0.8;
+			filter: grayscale(0.5);
+		}
+
+		.book-title {
+			font-size: 24px;
+			font-weight: 700;
+			color: var(--ion-color-dark);
+			margin-bottom: 8px;
+		}
+
+		.book-author {
+			font-size: 16px;
+			color: var(--ion-color-medium);
+		}
+
+		ion-card-content {
+			padding: 20px;
+		}
+
+		.book-genres {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-bottom: 24px;
+
+			.genre-badge {
+				background: var(--ion-color-light);
+				color: var(--ion-color-dark);
+				padding: 4px 12px;
+				border-radius: 16px;
+				font-size: 12px;
+				font-weight: 500;
+			}
+		}
+
+		.book-section {
+			margin-bottom: 24px;
+
+			h3 {
+				font-size: 18px;
+				font-weight: 600;
+				color: var(--ion-color-dark);
+				margin-bottom: 8px;
+			}
+
+			.book-description {
+				font-size: 15px;
+				line-height: 1.6;
+				color: var(--ion-color-dark);
+				margin: 0;
+			}
+			
+			p {
+				margin: 0;
+				color: var(--ion-color-medium);
+			}
+		}
+
+		.book-stats {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			margin-top: 16px;
+			margin-bottom: 24px;
+			padding-top: 16px;
+			border-top: 1px solid var(--ion-color-light-shade);
+
+			.stat {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+
+				.stat-label {
+					color: var(--ion-color-medium);
+					font-size: 14px;
+				}
+
+				.stat-value {
+					font-weight: 600;
+					font-size: 14px;
+					color: var(--ion-color-danger);
+
+					&.available {
+						color: var(--ion-color-success);
+					}
+				}
+			}
+		}
+
+		.action-buttons {
+			margin-top: 24px;
+		}
+	}
+}

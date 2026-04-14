@@ -25,6 +25,40 @@ export class BooksSearchComponent implements OnInit {
 	selectedAuthorIds = signal<number[]>([]);
 	selectedGenreIds = signal<number[]>([]);
 
+	isFiltersOpen = signal(false);
+	authorSearchQuery = signal('');
+	genreSearchQuery = signal('');
+
+	activeFiltersCount = computed(() => {
+		return this.selectedAuthorIds().length + this.selectedGenreIds().length;
+	});
+
+	filteredAuthors = computed(() => {
+		const query = this.authorSearchQuery().trim().toLowerCase();
+		const selectedIds = this.selectedAuthorIds();
+
+		if (!query) {
+			return this.authors().filter((author) => selectedIds.includes(author.id));
+		}
+		
+		return this.authors()
+			.filter((author) => selectedIds.includes(author.id) || author.name.toLowerCase().includes(query))
+			.slice(0, 50);
+	});
+
+	filteredGenres = computed(() => {
+		const query = this.genreSearchQuery().trim().toLowerCase();
+		const selectedIds = this.selectedGenreIds();
+
+		if (!query) {
+			return this.genres().filter((genre) => selectedIds.includes(genre.id));
+		}
+		
+		return this.genres()
+			.filter((genre) => selectedIds.includes(genre.id) || this.getGenreLabel(genre).toLowerCase().includes(query))
+			.slice(0, 50);
+	});
+
 	filteredBooks = computed(() => {
 		const query = this.searchQuery().trim().toLowerCase();
 		const selectedAuthors = this.selectedAuthorIds();
@@ -59,14 +93,40 @@ export class BooksSearchComponent implements OnInit {
 		this.searchQuery.set(event.detail.value ?? '');
 	}
 
-	onAuthorChange(event: CustomEvent) {
-		const values = (event.detail.value ?? []) as Array<number | string>;
-		this.selectedAuthorIds.set(values.map((value) => Number(value)));
+	openFilters() {
+		this.isFiltersOpen.set(true);
 	}
 
-	onGenreChange(event: CustomEvent) {
-		const values = (event.detail.value ?? []) as Array<number | string>;
-		this.selectedGenreIds.set(values.map((value) => Number(value)));
+	closeFilters() {
+		this.isFiltersOpen.set(false);
+		this.authorSearchQuery.set('');
+		this.genreSearchQuery.set('');
+	}
+
+	onAuthorSearchChange(event: CustomEvent) {
+		this.authorSearchQuery.set(event.detail.value ?? '');
+	}
+
+	onGenreSearchChange(event: CustomEvent) {
+		this.genreSearchQuery.set(event.detail.value ?? '');
+	}
+
+	toggleAuthor(authorId: number) {
+		const current = this.selectedAuthorIds();
+		if (current.includes(authorId)) {
+			this.selectedAuthorIds.set(current.filter((id) => id !== authorId));
+		} else {
+			this.selectedAuthorIds.set([...current, authorId]);
+		}
+	}
+
+	toggleGenre(genreId: number) {
+		const current = this.selectedGenreIds();
+		if (current.includes(genreId)) {
+			this.selectedGenreIds.set(current.filter((id) => id !== genreId));
+		} else {
+			this.selectedGenreIds.set([...current, genreId]);
+		}
 	}
 
 	clearFilters() {

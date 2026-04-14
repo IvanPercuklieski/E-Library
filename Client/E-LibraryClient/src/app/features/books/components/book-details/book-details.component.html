@@ -1,1 +1,47 @@
-<p>book-details works!</p>
+<ion-header>
+	<app-header></app-header>
+</ion-header>
+
+<ion-content>
+	<div class="book-details-page">
+		@if (isLoading) {
+			<div class="loading-container">
+				<ion-spinner name="crescent"></ion-spinner>
+			</div>
+		} @else if (book) {
+			<ion-card class="book-details-card" [class.unavailable]="book.availableBookCopies === 0">
+				<ion-card-header>
+					<ion-card-title class="book-title">{{ book.title }}</ion-card-title>
+					<div class="book-author">By {{ book.authorName }}</div>
+				</ion-card-header>
+
+				<ion-card-content>
+					<div class="book-genres">
+						@for (genre of book.genreNames; track genre) {
+							<span class="genre-badge">{{ genre }}</span>
+						}
+					</div>
+
+					<div class="book-section">
+						<h3>Description</h3>
+						<p class="book-description">{{ book.description }}</p>
+					</div>
+
+					<div class="book-section">
+						<h3>Published</h3>
+						<p>{{ book.pubDate | date:'longDate' }}</p>
+					</div>
+
+					<div class="book-stats">
+						<div class="stat">
+							<span class="stat-label">Available Copies:</span>
+							<span class="stat-value" [class.available]="book.availableBookCopies > 0">
+								{{ book.availableBookCopies }} / {{ book.totalBookCopies }}
+							</span>
+						</div>
+					</div>
+				</ion-card-content>
+			</ion-card>
+		}
+	</div>
+</ion-content>

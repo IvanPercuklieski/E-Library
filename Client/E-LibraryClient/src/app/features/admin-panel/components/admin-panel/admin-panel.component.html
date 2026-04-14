@@ -14,13 +14,21 @@
 				</ion-select>
 			</ion-item>
 
+			<ion-searchbar
+				class="resource-searchbar"
+				placeholder="Search..."
+				[value]="searchQuery()"
+				(ionInput)="onSearchChange($event)"
+				animated="true"
+			></ion-searchbar>
+
 			<ion-button class="create-button" (click)="openCreate()">Create</ion-button>
 		</div>
 
 		<div class="table-card">
 			@if (isLoading()) {
 				<div class="empty-state">Loading...</div>
-			} @else if (rows().length === 0) {
+			} @else if (filteredRows().length === 0) {
 				<div class="empty-state">No records found for selected resource.</div>
 			} @else {
 				<div class="table-wrap">
@@ -35,7 +43,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							@for (row of rows(); track $index) {
+							@for (row of filteredRows(); track $index) {
 								<tr>
 									<td>{{ $index + 1 }}</td>
 									@for (column of getColumns(); track column.key) {
@@ -57,7 +65,7 @@
 			}
 		</div>
 
-		<ion-modal [isOpen]="editorOpen()" (didDismiss)="closeEditor()">
+		<ion-modal [isOpen]="editorOpen()" (didDismiss)="closeEditor()" class="auto-height-modal">
 			<ng-template>
 				<ion-header>
 					<ion-toolbar class="modal-toolbar">
@@ -68,7 +76,7 @@
 					</ion-toolbar>
 				</ion-header>
 
-				<ion-content class="ion-padding modal-content">
+				<div class="custom-modal-content">
 					<div class="editor-card">
 						<form [formGroup]="resourceForm" class="editor-form">
 					@if (selectedResource() === 'book' || selectedResource() === 'genre') {
@@ -79,37 +87,107 @@
 					}
 
 					@if (selectedResource() === 'book') {
+						<div class="dropdown-container">
 							<ion-item lines="full" class="form-field-item">
-							<ion-label position="stacked">Author</ion-label>
-							<ion-select interface="popover" formControlName="authorId">
-								@for (author of authors(); track author.id) {
-									<ion-select-option [value]="author.id">{{ author.name }}</ion-select-option>
+								<ion-label position="stacked">Author</ion-label>
+								<ion-input
+									placeholder="Search authors..."
+									[value]="authorSearchQuery()"
+									(ionInput)="onAuthorSearchChange($event)"
+									(ionFocus)="showAuthorDropdown.set(true)"
+									(ionBlur)="hideAuthorDropdown()"									(keydown.escape)="$any($event.target).blur(); $event.stopPropagation()"								></ion-input>
+								@if (resourceForm.value.authorId) {
+									<ion-icon name="close-circle" slot="end" (click)="clearAuthor($event)" color="danger" style="cursor: pointer; margin-top: auto; margin-bottom: 8px;"></ion-icon>
 								}
-							</ion-select>
-						</ion-item>
+							</ion-item>
 
-						<ion-item lines="full" class="form-field-item">
-							<ion-label position="stacked">Genres</ion-label>
-							<ion-select
-								interface="popover"
-								formControlName="genreIds"
-								multiple="true"
-								(ionChange)="onGenreSelectChange($event)"
-							>
-								@for (genre of genres(); track genre.id) {
-									<ion-select-option [value]="genre.id">{{ genre.name }}</ion-select-option>
-								}
-							</ion-select>
-						</ion-item>
+							@if (showAuthorDropdown()) {
+								<div class="inline-dropdown">
+									<ion-list lines="none">
+										@for (author of filteredAuthors(); track author.id) {
+											<ion-item button (click)="selectAuthor(author.id)">
+												<ion-label [color]="resourceForm.value.authorId === author.id ? 'primary' : ''">
+													{{ author.name }}
+												</ion-label>
+												@if (resourceForm.value.authorId === author.id) {
+													<ion-icon name="checkmark-outline" color="primary" slot="end"></ion-icon>
+												}
+											</ion-item>
+										} @empty {
+											<ion-item><ion-label color="medium">No authors found</ion-label></ion-item>
+										}
+									</ion-list>
+								</div>
+							}
+						</div>
 
-						<ion-item lines="full" class="form-field-item">
+						<div class="dropdown-container">
+							<ion-item lines="full" class="form-field-item">
+								<ion-label position="stacked">Genres</ion-label>
+								<div class="faux-input-stacked" style="width: 100%;">
+									<ion-input 
+										placeholder="Search genres..."
+										[value]="genreSearchQuery()"
+										(ionInput)="onGenreSearchChange($event)"
+										(ionFocus)="showGenreDropdown.set(true)"
+										(ionBlur)="hideGenreDropdown()"
+										(keydown.escape)="$any($event.target).blur(); $event.stopPropagation()"
+										class="flex-input"
+									></ion-input>
+									@if (selectedGenres().length > 0) {
+										<div style="margin-top: 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
+											@for (genre of selectedGenres(); track genre.id) {
+												<ion-chip class="custom-chip">
+													<ion-label>{{ genre.name }}</ion-label>
+													<ion-icon name="close-circle" (click)="$event.stopPropagation(); toggleGenre(genre.id)"></ion-icon>
+												</ion-chip>
+											}
+										</div>
+									}
+								</div>
+							</ion-item>
+
+							@if (showGenreDropdown()) {
+								<div class="inline-dropdown">
+									<ion-list lines="none">
+										@for (genre of filteredGenres(); track genre.id) {
+											<ion-item button (click)="toggleGenre(genre.id)">
+												<ion-checkbox
+													[checked]="resourceForm.value.genreIds?.includes(genre.id) || false"
+													style="pointer-events: none;"
+												>
+													{{ genre.name }}
+												</ion-checkbox>
+											</ion-item>
+										} @empty {
+											<ion-item><ion-label color="medium">No genres found</ion-label></ion-item>
+										}
+									</ion-list>
+								</div>
+							}
+						</div>
+
+						<ion-item lines="full" class="form-field-item" id="date-trigger" button="true">
 							<ion-label position="stacked">Publication Date</ion-label>
-							<ion-input type="date" formControlName="pubDate"></ion-input>
+							<ion-input 
+								[value]="(resourceForm.value.pubDate | date:'MM/dd/yyyy') || 'mm/dd/yyyy'" 
+								readonly="true"
+								class="pointer-none"
+							></ion-input>
 						</ion-item>
+						<ion-popover trigger="date-trigger" showBackdrop="false" side="bottom" alignment="start" keepContentsMounted="true">
+							<ng-template>
+								<ion-datetime 
+									presentation="date" 
+									[value]="resourceForm.value.pubDate"
+									(ionChange)="resourceForm.patchValue({pubDate: $event.detail.value?.toString()})"
+								></ion-datetime>
+							</ng-template>
+						</ion-popover>
 
 						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Description</ion-label>
-							<ion-textarea formControlName="description" autoGrow="true"></ion-textarea>
+							<ion-textarea formControlName="description" autoGrow="true" rows="1" style="min-height: unset;"></ion-textarea>
 						</ion-item>
 
 						<ion-item lines="full" class="form-field-item">
@@ -171,17 +249,17 @@
 					}
 						</form>
 					</div>
-				</ion-content>
+				</div>
 
 				<ion-footer>
-					<ion-toolbar class="modal-toolbar modal-footer-toolbar">
-						<div class="modal-footer-actions">
-							<ion-button class="modal-cancel-btn" fill="outline" (click)="closeEditor()">Cancel</ion-button>
-							<ion-button class="modal-save-btn" (click)="save()">Save</ion-button>
-						</div>
-					</ion-toolbar>
-				</ion-footer>
-			</ng-template>
-		</ion-modal>
-	</div>
+<ion-toolbar class="modal-toolbar modal-footer-toolbar">
+<div class="modal-footer-actions">
+<ion-button class="modal-cancel-btn" fill="outline" (click)="closeEditor()">Cancel</ion-button>
+<ion-button class="modal-save-btn" (click)="save()">Save</ion-button>
+</div>
+</ion-toolbar>
+</ion-footer>
+</ng-template>
+</ion-modal>
+</div>
 </ion-content>
