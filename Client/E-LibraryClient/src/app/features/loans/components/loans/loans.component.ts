@@ -230,14 +230,28 @@ export class LoansComponent implements OnInit {
     }
 
     selectFormBook(id: number | null) {
-        this.borrowForm.patchValue({ bookCopyId: id });
         if (id) {
             const b = this.books().find((x) => x.id === id);
             this.formBookSearchQuery.set(b ? b.title : '');
+            this.showFormBookDropdown.set(false);
+
+            this.resourcesService.getBookCopies(id).subscribe({
+                next: (copies) => {
+                    const availableCopy = copies.find((c: any) => c.isAvailable);
+                    if (availableCopy) {
+                        this.borrowForm.patchValue({ bookCopyId: availableCopy.id });
+                    } else {
+                        this.borrowForm.patchValue({ bookCopyId: null });
+                        this.toast.show('No available copies found for this book', 3000, 'warning');
+                    }
+                },
+                error: () => this.toast.show('Failed to fetch book copies', 3000, 'danger')
+            });
         } else {
+            this.borrowForm.patchValue({ bookCopyId: null });
             this.formBookSearchQuery.set('');
+            this.showFormBookDropdown.set(false);
         }
-        this.showFormBookDropdown.set(false);
     }
 
     clearFormUser(event?: Event) {

@@ -14,6 +14,7 @@ import {
     Borrowing,
     BorrowingDto,
 } from 'src/app/core/models/modeli';
+import { Room, RoomDto } from 'src/app/core/models/seating.models';
 
 @Injectable({
 	providedIn: 'root',
@@ -42,6 +43,10 @@ export class ResourceManagerService {
 		return this.http.delete<void>(`api/books/delete/${bookId}`);
 	}
 
+	getBookCopies(bookId: number) {
+		return this.http.get<any[]>(`api/book-copies/by-book/${bookId}`);
+	}
+
 	getGenres() {
 		return this.http.get<Genre[]>('api/genres');
 	}
@@ -63,7 +68,7 @@ export class ResourceManagerService {
 	}
 
 	createAuthor(payload: AuthorDto) {
-		return this.http.post<Author>('authors/create', payload);
+		return this.http.post<Author>('authors/create-author', payload);
 	}
 
 	updateAuthor(authorId: number, payload: AuthorDto) {
@@ -116,5 +121,21 @@ export class ResourceManagerService {
 
 	deleteBorrowing(borrowingId: number) {
 		return this.http.delete<void>(`api/borrowings/delete/${borrowingId}`);
+	}
+
+	getRooms() {
+		return this.http.get<Room[]>('api/rooms');
+	}
+
+	createRoom(payload: RoomDto) {
+		return this.http.post<Room>('api/rooms/create-room', payload);
+	}
+
+	updateRoom(roomId: number, payload: RoomDto) {
+		return this.http.put<Room>(`api/rooms/update-room/${roomId}`, payload);
+	}
+
+	deleteRoom(roomId: number) {
+		return this.http.delete<void>(`api/rooms/delete/${roomId}`);
 	}
 }

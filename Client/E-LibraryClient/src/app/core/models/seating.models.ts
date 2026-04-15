@@ -21,3 +21,9 @@ export interface UpdateSeatDto {
 	isTaken: boolean;
 	userId?: number;
 }
+
+export interface RoomDto {
+	name: string;
+	location: string;
+	numSeats: number;
+}

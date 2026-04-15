@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonHeader, IonContent, IonButton, IonModal, IonToolbar, IonTitle, IonButtons, IonList, IonItem, IonLabel, IonInput, IonFooter } from '@ionic/angular/standalone';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 import { SeatingService } from '../../services/seating';
+import { ToastService } from 'src/app/shared/services/toast';
 import { ActivatedRoute } from '@angular/router';
 import { Room, Seat } from '../../../../core/models/seating.models';
 import { LibraryUser } from '../../../../core/models/modeli';
@@ -24,6 +25,7 @@ export class SeatingGridComponent implements OnInit {
 	private seatingService = inject(SeatingService);
 	private route = inject(ActivatedRoute);
 	private authService = inject(Auth);
+	private toastService = inject(ToastService);
 
 	roomId: number = 0;
 	roomDetails = signal<Room | null>(null);
@@ -72,10 +74,13 @@ export class SeatingGridComponent implements OnInit {
 	loadRoomSeats() {
 		this.seatingService.getRoomSeats(this.roomId).subscribe(data => {
 			this.seats.set(data);
-			if (data.length > 0 && data[0].room) {
-				this.roomDetails.set(data[0].room);
-				let numSeats = data[0].room.numSeats;
-				this.gridCols.set(Math.round(Math.sqrt(numSeats)));
+			if (data.length > 0) {
+				const rs = data.length;
+				this.gridCols.set(Math.ceil(Math.sqrt(rs)));
+				
+				if (data[0].room) {
+					this.roomDetails.set(data[0].room);
+				}
 			}
 		});
 	}
@@ -92,7 +97,7 @@ export class SeatingGridComponent implements OnInit {
 		const sNum = this.manageForm.get('seatNumber')?.value;
 		if (sNum === null) return false;
 		const seat = this.seats().find(s => s.seatNumber === sNum);
-		return seat?.taken || false;
+		return !!(seat?.taken || seat?.user);
 	}
 
 	get currentMappedSeatId(): number | null {
@@ -115,7 +120,7 @@ export class SeatingGridComponent implements OnInit {
 			if (targetSeat) {
 				this.manageForm.patchValue({ seatNumber: targetSeat.seatNumber });
 			}
-			if (targetSeat && targetSeat.taken && targetSeat.user) {
+			if (targetSeat && (targetSeat.taken || targetSeat.user) && targetSeat.user) {
 				this.manageForm.patchValue({ userId: targetSeat.user.id });
 				this.userSearchQuery.set(`${targetSeat.user.name} ${targetSeat.user.surname}`);
 			}
@@ -148,6 +153,8 @@ export class SeatingGridComponent implements OnInit {
 			this.seatingService.releaseSeat(sId).subscribe({
 				next: () => {
 					this.loadRoomSeats();
+					this.manageForm.patchValue({ userId: null });
+					this.userSearchQuery.set('');
 					this.closeModal();
 				},
 				error: (err) => console.error(err)
@@ -164,7 +171,9 @@ export class SeatingGridComponent implements OnInit {
 					this.loadRoomSeats();
 					this.closeModal();
 				},
-				error: (err) => console.error(err)
+				error: () => {
+					this.toastService.show('This user has already reserved a seat', 3000, 'danger');
+				}
 			});
 		}
 	}

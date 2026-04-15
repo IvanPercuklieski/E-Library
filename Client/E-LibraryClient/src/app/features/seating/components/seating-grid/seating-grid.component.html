@@ -15,10 +15,10 @@
 			@for (seat of seats(); track seat.id) {
 				<div 
 					class="seat" 
-					[class.taken]="seat.taken" 
-					[class.available]="!seat.taken"
+					[class.taken]="seat.taken || seat.user" 
+					[class.available]="!seat.taken && !seat.user"
 					[class.clickable]="isAdminOrBasic()"
-					[attr.title]="seat.taken && isAdminOrBasic() && seat.user ? seat.user.email : null"
+					[attr.title]="(seat.taken || seat.user) && isAdminOrBasic() && seat.user ? seat.user.email : null"
 					(click)="isAdminOrBasic() ? openManageModal(seat.id) : null"
 				>
 					{{ seat.seatNumber }}

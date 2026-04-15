@@ -124,28 +124,26 @@
 						<div class="dropdown-container">
 							<ion-item lines="full" class="form-field-item">
 								<ion-label position="stacked">Genres</ion-label>
-								<div class="faux-input-stacked" style="width: 100%;">
-									<ion-input 
-										placeholder="Search genres..."
-										[value]="genreSearchQuery()"
-										(ionInput)="onGenreSearchChange($event)"
-										(ionFocus)="showGenreDropdown.set(true)"
-										(ionBlur)="hideGenreDropdown()"
-										(keydown.escape)="$any($event.target).blur(); $event.stopPropagation()"
-										class="flex-input"
-									></ion-input>
-									@if (selectedGenres().length > 0) {
-										<div style="margin-top: 8px; margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
-											@for (genre of selectedGenres(); track genre.id) {
-												<ion-chip class="custom-chip">
-													<ion-label>{{ genre.name }}</ion-label>
-													<ion-icon name="close-circle" (click)="$event.stopPropagation(); toggleGenre(genre.id)"></ion-icon>
-												</ion-chip>
-											}
-										</div>
+								<ion-input 
+									placeholder="Search genres..."
+									[value]="genreSearchQuery()"
+									(ionInput)="onGenreSearchChange($event)"
+									(ionFocus)="showGenreDropdown.set(true)"
+									(ionBlur)="hideGenreDropdown()"
+									(keydown.escape)="$any($event.target).blur(); $event.stopPropagation()"
+									class="flex-input"
+								></ion-input>
+							</ion-item>
+							@if (selectedGenres().length > 0) {
+								<div style="padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--ion-color-step-150, #c8c7cc);">
+									@for (genre of selectedGenres(); track genre.id) {
+										<ion-chip class="custom-chip" color="primary">
+											<ion-label>{{ genre.name }}</ion-label>
+											<ion-icon name="close-circle" (click)="$event.stopPropagation(); toggleGenre(genre.id)"></ion-icon>
+										</ion-chip>
 									}
 								</div>
-							</ion-item>
+							}
 
 							@if (showGenreDropdown()) {
 								<div class="inline-dropdown">
@@ -196,7 +194,7 @@
 						</ion-item>
 					}
 
-					@if (selectedResource() === 'author' || selectedResource() === 'user') {
+					@if (selectedResource() === 'author' || selectedResource() === 'user' || selectedResource() === 'room') {
 						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Name</ion-label>
 							<ion-input formControlName="name"></ion-input>
@@ -245,6 +243,18 @@
 						<ion-item lines="full" class="form-field-item">
 							<ion-label position="stacked">Repeat Password</ion-label>
 							<ion-input type="password" formControlName="repeatPassword"></ion-input>
+						</ion-item>
+					}
+
+					@if (selectedResource() === 'room') {
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">Location</ion-label>
+							<ion-input formControlName="location"></ion-input>
+						</ion-item>
+
+						<ion-item lines="full" class="form-field-item">
+							<ion-label position="stacked">Number of Seats</ion-label>
+							<ion-input type="number" formControlName="numSeats"></ion-input>
 						</ion-item>
 					}
 						</form>

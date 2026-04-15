@@ -7,12 +7,13 @@ import { createOutline, trashOutline, checkmarkOutline, closeOutline, closeCircl
 import { Observable } from 'rxjs';
 import { catchError, of } from 'rxjs';
 import { Author, Book, Employee, EmployeeRegisterDto, Genre, LibraryUser } from 'src/app/core/models/modeli';
+import { Room } from 'src/app/core/models/seating.models';
 import { Auth } from 'src/app/features/auth/services/auth';
 import { HeaderComponent } from 'src/app/shared/components/header/header.component';
 import { ToastService } from 'src/app/shared/services/toast';
 import { ResourceManagerService } from '../../services/admin-panel';
 
-type ResourceType = 'book' | 'genre' | 'author' | 'user' | 'employee' | 'borrowing';
+type ResourceType = 'book' | 'genre' | 'author' | 'user' | 'employee' | 'borrowing' | 'room';
 
 interface ResourceOption {
 	value: ResourceType;
@@ -47,7 +48,7 @@ export class AdminPanelComponent implements OnInit {
 	];
 
 	selectedResource = signal<ResourceType>('book');
-	rows = signal<Array<Book | Genre | Author | LibraryUser | Employee>>([]);
+	rows = signal<Array<Book | Genre | Author | LibraryUser | Employee | Room>>([]);
 	authors = signal<Author[]>([]);
 	genres = signal<Genre[]>([]);
 	users = signal<LibraryUser[]>([]);
@@ -116,11 +117,14 @@ export class AdminPanelComponent implements OnInit {
 		username: new FormControl(''),
 		password: new FormControl(''),
 		repeatPassword: new FormControl(''),
+		location: new FormControl(''),
+		numSeats: new FormControl<number>(0),
 	});
 
 	ngOnInit(): void {
 		if (this.authService.hasAnyRole(['ADMIN'])) {
 			this.resourceOptions.push({ value: 'employee', label: 'Employees' });
+			this.resourceOptions.push({ value: 'room', label: 'Rooms' });
 		}
 		this.loadReferenceData();
 		this.loadCurrentResource();
@@ -197,12 +201,22 @@ export class AdminPanelComponent implements OnInit {
 		}
 	}
 
-	openEdit(row: Book | Genre | Author | LibraryUser | Employee) {
+	openEdit(row: Book | Genre | Author | LibraryUser | Employee | Room) {
 		this.editorOpen.set(true);
 		this.editingId.set((row as any).id);
 		this.showAuthorDropdown.set(false);
 		this.showGenreDropdown.set(false);
 		const resource = this.selectedResource();
+
+		if (resource === 'room') {
+			const room = row as Room;
+			this.resourceForm.patchValue({
+				name: room.name,
+				location: room.location,
+				numSeats: room.numSeats,
+			});
+			return;
+		}
 
 		if (resource === 'book') {
 			const book = row as Book;
@@ -254,6 +268,29 @@ export class AdminPanelComponent implements OnInit {
 	save() {
 		const resource = this.selectedResource();
 		const editingId = this.editingId();
+
+		if (resource === 'room') {
+			const payload = {
+				name: this.resourceForm.value.name ?? '',
+				location: this.resourceForm.value.location ?? '',
+				numSeats: Number(this.resourceForm.value.numSeats ?? 0),
+			};
+
+			if (!payload.name.trim() || !payload.location.trim() || payload.numSeats <= 0) {
+				this.toastService.show('Fill all required Room fields (numSeats > 0)', 3000, 'warning');
+				return;
+			}
+
+			const request = editingId
+				? this.resourcesService.updateRoom(editingId, payload)
+				: this.resourcesService.createRoom(payload);
+
+			request.subscribe({
+				next: () => this.handleSaveSuccess('Room saved successfully'),
+				error: () => this.toastService.show('Room save failed', 3000, 'danger'),
+			});
+			return;
+		}
 
 		if (resource === 'book') {
 			const payload = {
@@ -370,7 +407,7 @@ export class AdminPanelComponent implements OnInit {
 		});
 	}
 
-	deleteRow(row: Book | Genre | Author | LibraryUser | Employee) {
+	deleteRow(row: Book | Genre | Author | LibraryUser | Employee | Room) {
 		const rowId = (row as any).id;
 		if (!rowId) {
 			return;
@@ -390,6 +427,8 @@ export class AdminPanelComponent implements OnInit {
 		let request;
 		if (resource === 'book') {
 			request = this.resourcesService.deleteBook(rowId);
+		} else if (resource === 'room') {
+			request = this.resourcesService.deleteRoom(rowId);
 		} else if (resource === 'genre') {
 			request = this.resourcesService.deleteGenre(rowId);
 		} else if (resource === 'author') {
@@ -408,6 +447,14 @@ export class AdminPanelComponent implements OnInit {
 	}
 
 	getColumns(): ResourceColumn[] {
+		if (this.selectedResource() === 'room') {
+			return [
+				{ key: 'name', label: 'Name' },
+				{ key: 'location', label: 'Location' },
+				{ key: 'numSeats', label: 'Total Seats' },
+			];
+		}
+
 		if (this.selectedResource() === 'book') {
 			return [
 				{ key: 'title', label: 'Title' },
@@ -506,18 +553,20 @@ export class AdminPanelComponent implements OnInit {
 
 	private loadCurrentResource() {
 		this.isLoading.set(true);
-		let request: Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+		let request: Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
 
 		if (this.selectedResource() === 'book') {
-			request = this.resourcesService.getBooks() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+			request = this.resourcesService.getBooks() as Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
+		} else if (this.selectedResource() === 'room') {
+			request = this.resourcesService.getRooms() as Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
 		} else if (this.selectedResource() === 'genre') {
-			request = this.resourcesService.getGenres() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+			request = this.resourcesService.getGenres() as Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
 		} else if (this.selectedResource() === 'author') {
-			request = this.resourcesService.getAuthors() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+			request = this.resourcesService.getAuthors() as Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
 		} else if (this.selectedResource() === 'employee') {
-			request = this.resourcesService.getEmployees() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+			request = this.resourcesService.getEmployees() as Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
 		} else {
-			request = this.resourcesService.getUsers() as Observable<Array<Book | Genre | Author | LibraryUser | Employee>>;
+			request = this.resourcesService.getUsers() as Observable<Array<Book | Genre | Author | LibraryUser | Employee | Room>>;
 		}
 
 		request.pipe(catchError(() => of([]))).subscribe((rows) => {
@@ -545,6 +594,8 @@ export class AdminPanelComponent implements OnInit {
 			username: '',
 			password: '',
 			repeatPassword: '',
+			location: '',
+			numSeats: 0,
 		});
 	}
 }
