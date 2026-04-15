@@ -21,6 +21,11 @@ export const routes: Routes = [
 		canActivate: [roleGuard(['ADMIN', 'BASIC'])],
 	},
 	{
+		path: 'loans',
+		loadChildren: () => import('./features/loans/loans.routes').then((m) => m.LOANS_ROUTES),
+		canActivate: [roleGuard(['ADMIN', 'BASIC'])],
+	},
+	{
 		path: 'admin-panel',
 		redirectTo: 'resources',
 		pathMatch: 'full',

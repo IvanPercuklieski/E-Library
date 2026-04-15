@@ -1,3 +1,29 @@
 <ion-header>
 	<app-header></app-header>
 </ion-header>
+
+<ion-content class="ion-padding">
+	<h1 class="ion-padding-start">Select a Room</h1>
+	<ion-grid>
+		<ion-row>
+			@for (room of rooms(); track room.id) {
+			<ion-col size="12" size-md="6" size-lg="4">
+				<ion-card [routerLink]="['/seating', room.id]" class="ion-activatable ripple-parent" style="cursor: pointer;">
+					<ion-card-header>
+						<ion-card-title>{{ room.name }}</ion-card-title>
+						<ion-card-subtitle>{{ room.location }}</ion-card-subtitle>
+					</ion-card-header>
+					<ion-card-content>
+						<p>Total Seats: {{ room.numSeats }}</p>
+						<p>Available Seats: <strong style="color: var(--ion-color-success);">{{ room.availableSeatsCount }}</strong></p>
+					</ion-card-content>
+				</ion-card>
+			</ion-col>
+			} @empty {
+			<ion-col size="12">
+				<p class="ion-text-center">No rooms found.</p>
+			</ion-col>
+			}
+		</ion-row>
+	</ion-grid>
+</ion-content>

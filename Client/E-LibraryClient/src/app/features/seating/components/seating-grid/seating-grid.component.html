@@ -1,1 +1,94 @@
-<p>seating-grid works!</p>
+<ion-header>
+	<app-header></app-header>
+</ion-header>
+
+<ion-content class="ion-padding">
+	<div class="header-actions">
+		<h1>{{ roomDetails()?.name || 'Room Seating' }}</h1>
+		<ion-button class="create-button" *ngIf="isAdminOrBasic()" (click)="openManageModal()">Manage Seating</ion-button>
+	</div>
+	
+	<p *ngIf="roomDetails()">Location: {{ roomDetails()?.location }} | Available: {{ roomDetails()?.availableSeatsCount }} / {{ roomDetails()?.numSeats }}</p>
+
+	<div class="grid-container">
+		<div class="seating-grid" [ngStyle]="{'grid-template-columns': 'repeat(' + gridCols() + ', 40px)'}">
+			@for (seat of seats(); track seat.id) {
+				<div 
+					class="seat" 
+					[class.taken]="seat.taken" 
+					[class.available]="!seat.taken"
+					[class.clickable]="isAdminOrBasic()"
+					[attr.title]="seat.taken && isAdminOrBasic() && seat.user ? seat.user.email : null"
+					(click)="isAdminOrBasic() ? openManageModal(seat.id) : null"
+				>
+					{{ seat.seatNumber }}
+				</div>
+			} @empty {
+				<p>No seats available for this room.</p>
+			}
+		</div>
+	</div>
+
+	<!-- Management Modal -->
+	<ion-modal [isOpen]="isManageModalOpen()" (didDismiss)="closeModal()" class="auto-height-modal">
+		<ng-template>
+			<ion-header>
+				<ion-toolbar>
+					<ion-title>{{ selectedSeatId() ? 'Manage Seat' : 'Assign Seat' }}</ion-title>
+					<ion-buttons slot="end">
+						<ion-button (click)="closeModal()">Close</ion-button>
+					</ion-buttons>
+				</ion-toolbar>
+			</ion-header>
+			<ion-content class="ion-padding">
+				<form [formGroup]="manageForm" class="edit-form">
+					<!-- Seat Selection -->
+					<ion-item lines="full" class="form-field-item">
+						<ion-label position="stacked">Seat Number</ion-label>
+						<ion-input type="number" formControlName="seatNumber" placeholder="Enter seat number" [disabled]="!!selectedSeatId()"></ion-input>
+					</ion-item>
+
+					<!-- User Search Input -->
+					<div class="form-field-item" style="margin-bottom: 24px; position: relative;">
+						<ion-item lines="full" style="--padding-start: 0; --inner-padding-end: 0; --background: transparent;">
+							<ion-label position="stacked" style="color: var(--library-text-soft);">User</ion-label>
+							<div style="display: flex; flex-direction: column; width: 100%;">
+								<ion-input
+									placeholder="Search for a user..."
+									[value]="userSearchQuery()"
+									(ionInput)="onUserSearchInput($event)"
+									(ionFocus)="showUserDropdown.set(true)"
+									[debounce]="300"
+									style="--padding-start: 12px; --padding-end: 12px; --background: var(--library-bg-off); border-radius: 4px; margin-top: 8px; border: 1px solid var(--library-border);"
+								></ion-input>
+							</div>
+						</ion-item>
+
+						<div *ngIf="showUserDropdown() && filteredUsers().length > 0" class="inline-dropdown" style="position: absolute; top: calc(100% + 5px); left: 0; right: 0; background: white; border: 1px solid var(--library-border); border-radius: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; z-index: 1000;">
+							<ion-list style="padding: 0;">
+								@for (u of filteredUsers(); track u.id) {
+									<ion-item button lines="none" (click)="selectUser(u)" style="--min-height: 48px; border-bottom: 1px solid var(--library-bg-off);">
+										<ion-label>
+											<h2>{{ u.name }} {{ u.surname }}</h2>
+											<p style="color: var(--library-text-soft); font-size: 12px;">{{ u.email }}</p>
+										</ion-label>
+									</ion-item>
+								}
+							</ion-list>
+						</div>
+					</div>
+				</form>
+			</ion-content>
+			
+			<ion-footer>
+				<ion-toolbar class="modal-toolbar modal-footer-toolbar">
+					<div class="modal-footer-actions">
+						<ion-button *ngIf="isSelectedSeatTaken" color="danger" fill="clear" style="margin-right: auto;" (click)="releaseCurrentSeat()">Release</ion-button>
+						<ion-button class="modal-cancel-btn" fill="outline" (click)="closeModal()">Cancel</ion-button>
+						<ion-button class="modal-save-btn" [disabled]="!manageForm.valid || !currentMappedSeatId" (click)="saveSeat()">Save</ion-button>
+					</div>
+				</ion-toolbar>
+			</ion-footer>
+		</ng-template>
+	</ion-modal>
+</ion-content>

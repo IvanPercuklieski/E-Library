@@ -73,3 +73,19 @@ export interface EmployeeRegisterDto {
 	repeatPassword?: string;
 	email: string;
 }
+
+export interface Borrowing {
+	id: number;
+	userId: number;
+	bookCopyId: number;
+	bookTitle: string;
+	borrowedAt: string;
+	dueDate: string;
+}
+
+export interface BorrowingDto {
+	userId: number;
+	bookCopyId: number;
+	borrowedAt: string;
+	dueDate: string;
+}

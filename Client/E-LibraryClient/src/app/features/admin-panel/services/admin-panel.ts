@@ -11,6 +11,8 @@ import {
 	GenreDto,
 	LibraryUser,
 	LibraryUserDto,
+    Borrowing,
+    BorrowingDto,
 } from 'src/app/core/models/modeli';
 
 @Injectable({
@@ -76,6 +78,10 @@ export class ResourceManagerService {
 		return this.http.get<LibraryUser[]>('api/user/all');
 	}
 
+	getUserById(userId: number) {
+		return this.http.get<LibraryUser>(`api/user/get/${userId}`);
+	}
+
 	createUser(payload: LibraryUserDto) {
 		return this.http.post<LibraryUser>('api/user/add', payload);
 	}
@@ -94,5 +100,21 @@ export class ResourceManagerService {
 
 	createEmployee(payload: EmployeeRegisterDto) {
 		return this.http.post<Employee>('api/employee/register', payload);
+	}
+
+	getBorrowings() {
+		return this.http.get<Borrowing[]>('api/borrowings/getAll');
+	}
+
+	createBorrowing(payload: BorrowingDto) {
+		return this.http.post<Borrowing>('api/borrowings/create', payload);
+	}
+
+	updateBorrowing(borrowingId: number, payload: BorrowingDto) {
+		return this.http.put<Borrowing>(`api/borrowings/update/${borrowingId}`, payload);
+	}
+
+	deleteBorrowing(borrowingId: number) {
+		return this.http.delete<void>(`api/borrowings/delete/${borrowingId}`);
 	}
 }

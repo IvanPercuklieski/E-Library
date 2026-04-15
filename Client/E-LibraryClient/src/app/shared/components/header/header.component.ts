@@ -59,6 +59,10 @@ export class HeaderComponent {
 		await alert.present();
 	}
 
+	onLoansClick() {
+		this.router.navigate(['/loans']);
+	}
+
 	onLoginBtnClick() {
 		this.isProfileMenuOpen.set(false);
 		this.loginError.set(null);

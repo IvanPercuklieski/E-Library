@@ -12,7 +12,7 @@ import { HeaderComponent } from 'src/app/shared/components/header/header.compone
 import { ToastService } from 'src/app/shared/services/toast';
 import { ResourceManagerService } from '../../services/admin-panel';
 
-type ResourceType = 'book' | 'genre' | 'author' | 'user' | 'employee';
+type ResourceType = 'book' | 'genre' | 'author' | 'user' | 'employee' | 'borrowing';
 
 interface ResourceOption {
 	value: ResourceType;

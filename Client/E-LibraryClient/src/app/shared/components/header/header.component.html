@@ -9,6 +9,7 @@
 				<ion-button (click)="onBooksClick()">Rooms</ion-button>
 				@if (isLoggedIn() && canAccessResources()) {
 					<ion-button (click)="onAdminPanelClick()">Resources</ion-button>
+					<ion-button (click)="onLoansClick()">Loans</ion-button>
 				}
 			</ion-buttons>
 

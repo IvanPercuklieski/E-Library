@@ -1,0 +1,239 @@
+<ion-header>
+    <app-header></app-header>
+</ion-header>
+
+<ion-content>
+    <div class="resources-container">
+        <div class="resources-toolbar">
+            <h2 style="margin: 0; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 24px; color: var(--library-text);">Loans</h2>
+            <ion-button class="create-button" (click)="openCreate()">Create</ion-button>
+        </div>
+
+        <div class="filters-row" style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center; max-width: 100%; flex-wrap: wrap;">
+            <div class="dropdown-container" style="flex: 1; min-width: 200px;">
+                <ion-item lines="none" class="resource-select-item" style="--min-height: 48px; border-radius: 4px; border: 1px solid var(--library-border); --padding-start: 12px;">
+                    <ion-label position="stacked" style="color: var(--library-text-soft);">Filter User</ion-label>
+                    <ion-input
+                        placeholder="Search users..."
+                        [value]="borrowUserSearchQuery()"
+                        (ionInput)="onBorrowUserSearchChange($event)"
+                        (ionFocus)="showBorrowUserDropdown.set(true)"
+                        (ionBlur)="hideBorrowUserDropdown()"
+                    ></ion-input>
+                    <ion-icon *ngIf="borrowUserFilter()" name="close-circle" slot="end" (click)="clearBorrowUser($event)" color="medium" style="cursor: pointer;"></ion-icon>
+                </ion-item>
+                <div class="inline-dropdown" *ngIf="showBorrowUserDropdown()">
+                    <ion-list lines="none">
+                        @for (user of filteredBorrowUsers(); track user.id) {
+                            <ion-item button (click)="selectBorrowUser(user.id)" [color]="borrowUserFilter() === user.id ? 'light' : ''">
+                                <ion-label>{{ user.name }} {{ user.surname }}</ion-label>
+                            </ion-item>
+                        } @empty {
+                            <ion-item><ion-label color="medium">No users found</ion-label></ion-item>
+                        }
+                    </ion-list>
+                </div>
+            </div>
+
+            <div class="dropdown-container" style="flex: 1; min-width: 200px;">
+                <ion-item lines="none" class="resource-select-item" style="--min-height: 48px; border-radius: 4px; border: 1px solid var(--library-border); --padding-start: 12px;">
+                    <ion-label position="stacked" style="color: var(--library-text-soft);">Filter Book</ion-label>
+                    <ion-input
+                        placeholder="Search books..."
+                        [value]="borrowBookSearchQuery()"
+                        (ionInput)="onBorrowBookSearchChange($event)"
+                        (ionFocus)="showBorrowBookDropdown.set(true)"
+                        (ionBlur)="hideBorrowBookDropdown()"
+                    ></ion-input>
+                    <ion-icon *ngIf="borrowBookFilter()" name="close-circle" slot="end" (click)="clearBorrowBook($event)" color="medium" style="cursor: pointer;"></ion-icon>
+                </ion-item>
+                <div class="inline-dropdown" *ngIf="showBorrowBookDropdown()">
+                    <ion-list lines="none">
+                        @for (book of filteredBorrowBooks(); track book.id) {
+                            <ion-item button (click)="selectBorrowBook(book.id)" [color]="borrowBookFilter() === book.id ? 'light' : ''">
+                                <ion-label>{{ book.title }}</ion-label>
+                            </ion-item>
+                        } @empty {
+                            <ion-item><ion-label color="medium">No books found</ion-label></ion-item>
+                        }
+                    </ion-list>
+                </div>
+            </div>
+
+            <div class="dropdown-container" style="flex: 1; min-width: 150px;">
+                <ion-item lines="none" id="due-from-trigger" button="true" class="resource-select-item" style="--min-height: 48px; border-radius: 4px; border: 1px solid var(--library-border); --padding-start: 12px;">
+                    <ion-label position="stacked" style="color: var(--library-text-soft);">Due From</ion-label>
+                    <ion-input [value]="dueDateFrom() ? (dueDateFrom() | date:'MM/dd/yyyy') : 'mm/dd/yyyy'" readonly="true"></ion-input>
+                    <ion-icon *ngIf="dueDateFrom()" name="close-circle" slot="end" (click)="$event.stopPropagation(); dueDateFrom.set(null)" color="medium" style="cursor: pointer;"></ion-icon>
+                </ion-item>
+                <ion-popover trigger="due-from-trigger" showBackdrop="false" side="bottom" alignment="start" keepContentsMounted="true">
+                    <ng-template>
+                        <ion-datetime presentation="date" [value]="dueDateFrom()" (ionChange)="dueDateFrom.set($event.detail.value?.toString() || null)"></ion-datetime>
+                    </ng-template>
+                </ion-popover>
+            </div>
+
+            <div class="dropdown-container" style="flex: 1; min-width: 150px;">
+                <ion-item lines="none" id="due-to-trigger" button="true" class="resource-select-item" style="--min-height: 48px; border-radius: 4px; border: 1px solid var(--library-border); --padding-start: 12px;">
+                    <ion-label position="stacked" style="color: var(--library-text-soft);">Due To</ion-label>
+                    <ion-input [value]="dueDateTo() ? (dueDateTo() | date:'MM/dd/yyyy') : 'mm/dd/yyyy'" readonly="true"></ion-input>
+                    <ion-icon *ngIf="dueDateTo()" name="close-circle" slot="end" (click)="$event.stopPropagation(); dueDateTo.set(null)" color="medium" style="cursor: pointer;"></ion-icon>
+                </ion-item>
+                <ion-popover trigger="due-to-trigger" showBackdrop="false" side="bottom" alignment="start" keepContentsMounted="true">
+                    <ng-template>
+                        <ion-datetime presentation="date" [value]="dueDateTo()" (ionChange)="dueDateTo.set($event.detail.value?.toString() || null)"></ion-datetime>
+                    </ng-template>
+                </ion-popover>
+            </div>
+
+            <div class="filter-item" style="display: flex; align-items: center; justify-content: center; border: 1px solid var(--library-border); border-radius: 4px; background: white; height: 48px; padding: 0 16px;">
+                <ion-label style="margin-right: 12px; color: var(--library-text-soft); font-size: 14px;">Overdue</ion-label>
+                <ion-checkbox [checked]="showOverdue()" (ionChange)="showOverdue.set($event.detail.checked)"></ion-checkbox>
+            </div>
+        </div>
+
+        <div class="table-card">
+            @if (isLoading()) {
+                <div class="empty-state">Loading...</div>
+            } @else if (filteredRows().length === 0) {
+                <div class="empty-state">No borrowings found.</div>
+            } @else {
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>User</th>
+                                <th>Book</th>
+                                <th>Borrowed At</th>
+                                <th>Due Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (row of filteredRows(); track $index) {
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>
+                                        <div>{{ (getUserById(row.userId)?.name || '-') }} {{ (getUserById(row.userId)?.surname || '') }}</div>
+                                        <div class="user-email">{{ getUserById(row.userId)?.email || '' }}</div>
+                                    </td>
+                                    <td>{{ row.bookTitle }}</td>
+                                    <td>{{ row.borrowedAt | date:'MM/dd/yyyy' }}</td>
+                                    <td [class.overdue]="isOverdue(row.dueDate)">{{ row.dueDate | date:'MM/dd/yyyy' }}</td>
+                                    <td class="actions-cell">
+                                        <ion-button size="small" fill="clear" color="medium" (click)="openEdit(row)" title="Edit">
+                                            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                                        </ion-button>
+                                        <ion-button size="small" fill="clear" color="danger" (click)="delete(row)" title="Delete">
+                                            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                                        </ion-button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <ion-modal [isOpen]="editorOpen()" (didDismiss)="editorOpen.set(false)" class="auto-height-modal">
+            <ng-template>
+                <ion-header>
+                    <ion-toolbar class="modal-toolbar">
+                        <ion-title>{{ editingId() ? 'Edit Borrowing' : 'Add Borrowing' }}</ion-title>
+                        <ion-buttons slot="end">
+                            <ion-button (click)="editorOpen.set(false)">Close</ion-button>
+                        </ion-buttons>
+                    </ion-toolbar>
+                </ion-header>
+
+                <div class="custom-modal-content">
+                    <div class="editor-card">
+                        <form [formGroup]="borrowForm" class="editor-form">
+                            <div style="position: relative;">
+                                <ion-item lines="full" class="form-field-item">
+                                    <ion-label position="stacked">User</ion-label>
+                                    <ion-input
+                                        placeholder="Search users..."
+                                        [value]="formUserSearchQuery()"
+                                        (ionInput)="onFormUserSearchChange($event)"
+                                        (ionFocus)="showFormUserDropdown.set(true)"
+                                        (ionBlur)="hideFormUserDropdown()"
+                                    ></ion-input>
+                                    <ion-icon *ngIf="borrowForm.value.userId" name="close-circle" slot="end" (click)="clearFormUser($event)" color="danger" style="cursor: pointer; margin-top: auto; margin-bottom: 8px;"></ion-icon>
+                                </ion-item>
+                                <div class="inline-dropdown" *ngIf="showFormUserDropdown()">
+                                    <ion-list lines="none">
+                                        @for (user of filteredFormUsers(); track user.id) {
+                                            <ion-item button (click)="selectFormUser(user.id)" [color]="borrowForm.value.userId === user.id ? 'light' : ''">
+                                                <ion-label>{{ user.name }} {{ user.surname }}</ion-label>
+                                            </ion-item>
+                                        } @empty {
+                                            <ion-item><ion-label color="medium">No users found</ion-label></ion-item>
+                                        }
+                                    </ion-list>
+                                </div>
+                            </div>
+
+                            <div style="position: relative;">
+                                <ion-item lines="full" class="form-field-item">
+                                    <ion-label position="stacked">Book</ion-label>
+                                    <ion-input
+                                        placeholder="Search books..."
+                                        [value]="formBookSearchQuery()"
+                                        (ionInput)="onFormBookSearchChange($event)"
+                                        (ionFocus)="showFormBookDropdown.set(true)"
+                                        (ionBlur)="hideFormBookDropdown()"
+                                    ></ion-input>
+                                    <ion-icon *ngIf="borrowForm.value.bookCopyId" name="close-circle" slot="end" (click)="clearFormBook($event)" color="danger" style="cursor: pointer; margin-top: auto; margin-bottom: 8px;"></ion-icon>
+                                </ion-item>
+                                <div class="inline-dropdown" *ngIf="showFormBookDropdown()">
+                                    <ion-list lines="none">
+                                        @for (book of filteredFormBooks(); track book.id) {
+                                            <ion-item button (click)="selectFormBook(book.id)" [color]="borrowForm.value.bookCopyId === book.id ? 'light' : ''">
+                                                <ion-label>{{ book.title }}</ion-label>
+                                            </ion-item>
+                                        } @empty {
+                                            <ion-item><ion-label color="medium">No books found</ion-label></ion-item>
+                                        }
+                                    </ion-list>
+                                </div>
+                            </div>
+
+
+                            <ion-item lines="full" class="form-field-item" id="borrowed-at-trigger" button="true">
+                                <ion-label position="stacked">Borrowed At</ion-label>
+                                <ion-input [value]="borrowForm.value.borrowedAt | date:'MM/dd/yyyy'" readonly></ion-input>
+                            </ion-item>
+                            <ion-popover trigger="borrowed-at-trigger" showBackdrop="false" side="bottom" alignment="start" keepContentsMounted="true">
+                                <ng-template>
+                                    <ion-datetime presentation="date" [value]="borrowForm.value.borrowedAt" (ionChange)="borrowForm.patchValue({ borrowedAt: $event.detail.value?.toString() })"></ion-datetime>
+                                </ng-template>
+                            </ion-popover>
+
+                            <ion-item lines="full" class="form-field-item" id="due-date-trigger" button="true">
+                                <ion-label position="stacked">Due Date</ion-label>
+                                <ion-input [value]="borrowForm.value.dueDate | date:'MM/dd/yyyy'" readonly></ion-input>
+                            </ion-item>
+                            <ion-popover trigger="due-date-trigger" showBackdrop="false" side="bottom" alignment="start" keepContentsMounted="true">
+                                <ng-template>
+                                    <ion-datetime presentation="date" [value]="borrowForm.value.dueDate" (ionChange)="borrowForm.patchValue({ dueDate: $event.detail.value?.toString() })"></ion-datetime>
+                                </ng-template>
+                            </ion-popover>
+                        </form>
+                    </div>
+                </div>
+
+                <ion-footer>
+                    <ion-toolbar class="modal-toolbar modal-footer-toolbar">
+                        <div class="modal-footer-actions">
+                            <ion-button class="modal-cancel-btn" fill="outline" (click)="editorOpen.set(false)">Cancel</ion-button>
+                            <ion-button class="modal-save-btn" (click)="save()">Save</ion-button>
+                        </div>
+                    </ion-toolbar>
+                </ion-footer>
+            </ng-template>
+        </ion-modal>
+    </div>
+</ion-content>
