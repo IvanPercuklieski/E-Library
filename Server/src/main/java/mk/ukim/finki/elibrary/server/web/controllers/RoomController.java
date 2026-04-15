@@ -34,7 +34,7 @@ public class RoomController {
 
     // CREATE room
     // @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("create-room/{id}")
+    @PostMapping("create-room")
     public ResponseEntity<DisplayRoomDto> createRoom(@RequestBody CreateRoomDto dto) {
         DisplayRoomDto created = roomService.createRoom(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);

@@ -34,7 +34,7 @@ public class AuthorController {
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("update-author/{id}")
+    @PostMapping("create-author")
     public DisplayAuthorDto createAuthor(@RequestBody(required = false) CreateAuthorDto author) {
         if (author == null) {
             throw new IllegalArgumentException("Author data is required");
