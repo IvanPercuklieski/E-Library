@@ -10,7 +10,7 @@ import java.util.List;
 public interface BorrowedBookDomainService {
     BorrowedBook createBookBorrowing(CreateBorrowedBookDto dto);
     BorrowedBook updateBookBorrowing(Long id, UpdateBorrowedBookDto dto);
-    void deleteBookBorrowing(CreateBookBorrowLogDto dto );
+    void deleteBookBorrowing(Long id);
     List<BorrowedBook> getAllBookBorrowings();
     List<BorrowedBook> getAllBookBorrowingsByBook(Long bookId);
     List<BorrowedBook> getAllBookBorrowingsByUser(Long userId);

@@ -1,15 +1,10 @@
 package mk.ukim.finki.elibrary.server.model.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "bookcopies")
 public class BookCopy {
 
@@ -21,6 +16,14 @@ public class BookCopy {
     @JoinColumn(name = "base_book_id", nullable = false)
     private BaseBook baseBook;
 
+    // FULL HISTORY OF BORROWS (NOT ONLY ONE)
+    @OneToMany(
+            mappedBy = "bookCopy",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<BorrowedBook> borrowHistory = new ArrayList<>();
+
     @OneToMany(
             mappedBy = "bookCopy",
             cascade = CascadeType.ALL,
@@ -28,27 +31,18 @@ public class BookCopy {
     )
     private List<BookBorrowLog> logs = new ArrayList<>();
 
-    @OneToOne(
-            mappedBy = "bookCopy",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private BorrowedBook borrowedBook;
+    @Column(nullable = false)
+    private Boolean isAvailable = true;
 
-    @Column
-    private Boolean isAvailable;
+    public BookCopy() {}
 
-    public BookCopy(BaseBook b) {
-        this.baseBook = b;
-        this.isAvailable=true;
+    public BookCopy(BaseBook baseBook) {
+        this.baseBook = baseBook;
+        this.isAvailable = true;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public BaseBook getBaseBook() {
@@ -59,6 +53,14 @@ public class BookCopy {
         this.baseBook = baseBook;
     }
 
+    public List<BorrowedBook> getBorrowHistory() {
+        return borrowHistory;
+    }
+
+    public void setBorrowHistory(List<BorrowedBook> borrowHistory) {
+        this.borrowHistory = borrowHistory;
+    }
+
     public List<BookBorrowLog> getLogs() {
         return logs;
     }
@@ -67,19 +69,11 @@ public class BookCopy {
         this.logs = logs;
     }
 
-    public BorrowedBook getBorrowedBook() {
-        return borrowedBook;
-    }
-
-    public void setBorrowedBook(BorrowedBook borrowedBook) {
-        this.borrowedBook = borrowedBook;
-    }
-
     public Boolean getIsAvailable() {
         return isAvailable;
     }
 
     public void setIsAvailable(Boolean available) {
-        isAvailable = available;
+        this.isAvailable = available;
     }
 }

@@ -44,9 +44,9 @@ public class BookBorrowController {
     }
 
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteWithLog(@RequestBody CreateBookBorrowLogDto dto) {
-        borrowedBookDomainService.deleteBookBorrowing(dto);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteWithLog(@PathVariable Long id) {
+        borrowedBookDomainService.deleteBookBorrowing(id);
         return ResponseEntity.noContent().build();
     }
 

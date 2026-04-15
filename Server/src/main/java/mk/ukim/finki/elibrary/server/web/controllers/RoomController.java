@@ -3,11 +3,10 @@ package mk.ukim.finki.elibrary.server.web.controllers;
 import mk.ukim.finki.elibrary.server.dto.CreateRoomDto;
 import mk.ukim.finki.elibrary.server.dto.DisplayRoomDto;
 import mk.ukim.finki.elibrary.server.dto.update.UpdateRoomDto;
-import mk.ukim.finki.elibrary.server.model.domain.Seat;
 import mk.ukim.finki.elibrary.server.service.backend.application.RoomApplicationService;
+import mk.ukim.finki.elibrary.server.service.domain.impl.RoomDomainServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,7 +26,7 @@ public class RoomController {
 
 
     @GetMapping("/{roomId}/seats")
-    public List<Seat> getSeatsInRoom(@PathVariable Long roomId) {
+    public List<RoomDomainServiceImpl.SeatDto> getSeatsInRoom(@PathVariable Long roomId) {
         return roomService.getSeatsInRoom(roomId);
     }
 

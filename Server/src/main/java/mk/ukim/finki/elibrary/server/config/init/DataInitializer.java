@@ -64,7 +64,6 @@ public class DataInitializer {
         seedBaseBooksAndCopies();
         seedRoomsAndSeats();
         seedEmployees();
-        seedBorrowedBooksSample();
 //        seedBookBorrowLogsBig();
         seedBookBorrowLogsSmall();
     }
@@ -307,19 +306,41 @@ public class DataInitializer {
 
         Room room1 = new Room("Sala 1", "Prv kat", 10, null);
         Room room2 = new Room("Sala 3", "Vtor kat", 8, null);
+
         roomRepository.saveAll(List.of(room1, room2));
 
         List<UserWrapper> users = userWrapperRepository.findAll();
-        if (users.size() < 2) return;
 
-        UserWrapper user1 = users.get(0);
-        UserWrapper user2 = users.get(1);
+        List<Seat> seats = new ArrayList<>();
+        int userIndex = 0;
 
-        Seat seat1 = new Seat(1, false, user1, room1);
-        Seat seat2 = new Seat(2, true, user2, room2);
-        seatRepository.saveAll(List.of(seat1, seat2));
+        // generate seats for room1
+        for (int i = 1; i <= room1.getNumSeats(); i++) {
+            UserWrapper user = userIndex < users.size() ? users.get(userIndex++) : null;
 
-        System.out.println("[DataInitializer] Seeded rooms and seats.");
+            seats.add(new Seat(
+                    i,
+                    false,
+                    user,
+                    room1
+            ));
+        }
+
+        // generate seats for room2
+        for (int i = 1; i <= room2.getNumSeats(); i++) {
+            UserWrapper user = userIndex < users.size() ? users.get(userIndex++) : null;
+
+            seats.add(new Seat(
+                    i,
+                    false,
+                    user,
+                    room2
+            ));
+        }
+
+        seatRepository.saveAll(seats);
+
+        System.out.println("[DataInitializer] Seeded rooms with seats.");
     }
 
     private void seedEmployees() {
@@ -337,27 +358,6 @@ public class DataInitializer {
 
         employeeRepository.saveAll(List.of(employee1, employee2));
         System.out.println("[DataInitializer] Seeded employees.");
-    }
-
-    private void seedBorrowedBooksSample() {
-        if (borrowedBookRepository.count() > 0) return;
-
-        List<UserWrapper> users = userWrapperRepository.findAll();
-        List<BookCopy> copies = bookCopyRepository.findAll();
-        if (users.isEmpty() || copies.isEmpty()) return;
-
-        UserWrapper user1 = users.get(0);
-        BookCopy copy1 = copies.get(0);
-
-        BorrowedBook borrowed1 = new BorrowedBook(
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(10),
-                user1,
-                copy1
-        );
-        borrowedBookRepository.save(borrowed1);
-
-        System.out.println("[DataInitializer] Seeded sample BorrowedBook.");
     }
 
     //Metod za mnogu podatoci

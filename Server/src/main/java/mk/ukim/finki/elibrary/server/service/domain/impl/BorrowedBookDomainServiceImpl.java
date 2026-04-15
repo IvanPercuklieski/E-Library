@@ -1,30 +1,20 @@
 package mk.ukim.finki.elibrary.server.service.domain.impl;
 
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 import mk.ukim.finki.elibrary.server.dto.create.CreateBookBorrowLogDto;
 import mk.ukim.finki.elibrary.server.dto.create.CreateBorrowedBookDto;
-import mk.ukim.finki.elibrary.server.dto.display.DisplayBorrowedBookDto;
 import mk.ukim.finki.elibrary.server.dto.update.UpdateBorrowedBookDto;
 import mk.ukim.finki.elibrary.server.events.BookBorrowLogCreatedEvent;
-import mk.ukim.finki.elibrary.server.model.domain.BookBorrowLog;
-import mk.ukim.finki.elibrary.server.model.domain.BookCopy;
-import mk.ukim.finki.elibrary.server.model.domain.BorrowedBook;
-import mk.ukim.finki.elibrary.server.model.domain.UserWrapper;
-import mk.ukim.finki.elibrary.server.model.exceptions.BookCopyNotFoundException;
-import mk.ukim.finki.elibrary.server.model.exceptions.BorrowedBookNotFoundException;
-import mk.ukim.finki.elibrary.server.model.exceptions.UserWrapperNotFoundException;
-import mk.ukim.finki.elibrary.server.repository.BookCopyRepository;
-import mk.ukim.finki.elibrary.server.repository.BorrowedBookLogRepository;
-import mk.ukim.finki.elibrary.server.repository.BorrowedBookRepository;
-import mk.ukim.finki.elibrary.server.repository.UserWrapperRepository;
+import mk.ukim.finki.elibrary.server.model.domain.*;
+import mk.ukim.finki.elibrary.server.model.exceptions.*;
+import mk.ukim.finki.elibrary.server.repository.*;
 import mk.ukim.finki.elibrary.server.service.domain.BorrowedBookDomainService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import mk.ukim.finki.elibrary.server.events.BookBorrowLogCreatedEvent;
+
 @Service
 public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService {
 
@@ -33,7 +23,14 @@ public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService 
     private final UserWrapperRepository userWrapperRepository;
     private final BorrowedBookLogRepository borrowedBookLogRepository;
     private final ApplicationEventPublisher eventPublisher;
-    public BorrowedBookDomainServiceImpl(BorrowedBookRepository borrowedBookRepository, BookCopyRepository bookCopyRepository, UserWrapperRepository userWrapperRepository, BorrowedBookLogRepository borrowedBookLogRepository, ApplicationEventPublisher eventPublisher) {
+
+    public BorrowedBookDomainServiceImpl(
+            BorrowedBookRepository borrowedBookRepository,
+            BookCopyRepository bookCopyRepository,
+            UserWrapperRepository userWrapperRepository,
+            BorrowedBookLogRepository borrowedBookLogRepository,
+            ApplicationEventPublisher eventPublisher
+    ) {
         this.borrowedBookRepository = borrowedBookRepository;
         this.bookCopyRepository = bookCopyRepository;
         this.userWrapperRepository = userWrapperRepository;
@@ -41,21 +38,31 @@ public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService 
         this.eventPublisher = eventPublisher;
     }
 
+    @Transactional
     @Override
-    public BorrowedBook createBookBorrowing(CreateBorrowedBookDto bookCopy) {
-        BookCopy copy= bookCopyRepository.findById(bookCopy.bookCopyId()).orElseThrow(()->new BookCopyNotFoundException(bookCopy.bookCopyId()));
-        UserWrapper userWrapper=userWrapperRepository.findById(bookCopy.userId()).orElseThrow(()->new UserWrapperNotFoundException(bookCopy.userId()));
+    public BorrowedBook createBookBorrowing(CreateBorrowedBookDto dto) {
 
-        BorrowedBook borrowing=new BorrowedBook();
-        borrowing.setBorrowedAt(bookCopy.borrowedAt());
-        borrowing.setDueDate(bookCopy.dueDate());
-        borrowing.setBookCopy(copy);
-        copy.setBorrowedBook(borrowing);
-        borrowing.setUser(userWrapper);
+        BookCopy copy = bookCopyRepository.findById(dto.bookCopyId())
+                .orElseThrow(() -> new BookCopyNotFoundException(dto.bookCopyId()));
+
+        if (!Boolean.TRUE.equals(copy.getIsAvailable())) {
+            throw new IllegalStateException();
+        }
+
+        UserWrapper user = userWrapperRepository.findById(dto.userId())
+                .orElseThrow(() -> new UserWrapperNotFoundException(dto.userId()));
+
+        BorrowedBook borrowing = new BorrowedBook(
+                dto.borrowedAt(),
+                dto.dueDate(),
+                user,
+                copy
+        );
+
         copy.setIsAvailable(false);
+
         bookCopyRepository.save(copy);
         return borrowedBookRepository.save(borrowing);
-
     }
 
     @Transactional
@@ -65,27 +72,22 @@ public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService 
         BorrowedBook borrowing = borrowedBookRepository.findById(id)
                 .orElseThrow(() -> new BorrowedBookNotFoundException(id));
 
-        UserWrapper userWrapper = userWrapperRepository.findById(dto.userId())
+        UserWrapper user = userWrapperRepository.findById(dto.userId())
                 .orElseThrow(() -> new UserWrapperNotFoundException(dto.userId()));
+
+        BookCopy oldCopy = borrowing.getBookCopy();
 
         BookCopy newCopy = bookCopyRepository.findById(dto.bookCopyId())
                 .orElseThrow(() -> new BookCopyNotFoundException(dto.bookCopyId()));
 
-        BookCopy oldCopy = borrowing.getBookCopy();
+        if (!oldCopy.getId().equals(newCopy.getId())) {
 
-
-        if (oldCopy != null && !oldCopy.getId().equals(newCopy.getId())) {
-
-            if (Boolean.FALSE.equals(newCopy.getIsAvailable())) {
-                throw new BookCopyNotFoundException(newCopy.getId());
+            if (!Boolean.TRUE.equals(newCopy.getIsAvailable())) {
+                throw new IllegalStateException();
             }
 
             oldCopy.setIsAvailable(true);
-            oldCopy.setBorrowedBook(null);
-
-
             newCopy.setIsAvailable(false);
-            newCopy.setBorrowedBook(borrowing);
 
             borrowing.setBookCopy(newCopy);
 
@@ -93,7 +95,7 @@ public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService 
             bookCopyRepository.save(newCopy);
         }
 
-        borrowing.setUser(userWrapper);
+        borrowing.setUser(user);
         borrowing.setBorrowedAt(dto.borrowedAt());
         borrowing.setDueDate(dto.dueDate());
 
@@ -102,32 +104,31 @@ public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService 
 
     @Transactional
     @Override
-    public void deleteBookBorrowing(CreateBookBorrowLogDto dto) {
+    public void deleteBookBorrowing(Long borrowingId) {
 
-        BorrowedBook borrowing = borrowedBookRepository.findById(dto.bookBorrowingId())
-                .orElseThrow(() -> new BorrowedBookNotFoundException(dto.bookBorrowingId()));
+        BorrowedBook borrowing = borrowedBookRepository.findById(borrowingId)
+                .orElseThrow(() -> new BorrowedBookNotFoundException(borrowingId));
 
         BookCopy copy = borrowing.getBookCopy();
-
-        copy.setIsAvailable(true);
-        copy.setBorrowedBook(null);
-        borrowing.setBookCopy(null);
-        bookCopyRepository.save(copy);
 
         BookBorrowLog log = new BookBorrowLog();
         log.setBookCopy(copy);
         log.setUser(borrowing.getUser());
+        log.setBorrowedAt(borrowing.getBorrowedAt());
+        log.setDueDate(borrowing.getDueDate());
+        log.setReturnedAt(LocalDateTime.now());
+        log.setNotes(null);
 
-        log.setBorrowedAt(dto.borrowedAt() != null ? dto.borrowedAt() : borrowing.getBorrowedAt());
-        log.setDueDate(dto.dueDate() != null ? dto.dueDate() : borrowing.getDueDate());
-        log.setReturnedAt(dto.returnedAt() != null ? dto.returnedAt() : LocalDateTime.now());
-        log.setNotes(dto.notes());
+        borrowedBookLogRepository.save(log);
 
-        BookBorrowLog saved = borrowedBookLogRepository.save(log);
+        borrowedBookRepository.delete(borrowing);
+
+        copy.setIsAvailable(true);
+        bookCopyRepository.save(copy);
+
         eventPublisher.publishEvent(
-                new BookBorrowLogCreatedEvent(saved.getId(), saved.getUser().getId())
+                new BookBorrowLogCreatedEvent(log.getId(), log.getUser().getId())
         );
-
     }
 
     @Override
@@ -142,13 +143,15 @@ public class BorrowedBookDomainServiceImpl implements BorrowedBookDomainService 
 
     @Override
     public List<BorrowedBook> getAllBookBorrowingsByUser(Long userId) {
-        UserWrapper userWrapper = userWrapperRepository.findById(userId)
+        UserWrapper user = userWrapperRepository.findById(userId)
                 .orElseThrow(() -> new UserWrapperNotFoundException(userId));
-        return borrowedBookRepository.findByUser(userWrapper);
+
+        return borrowedBookRepository.findByUser(user);
     }
 
     @Override
     public BorrowedBook getById(Long borrowingId) {
-        return borrowedBookRepository.findById(borrowingId).orElseThrow(() -> new BorrowedBookNotFoundException(borrowingId));
+        return borrowedBookRepository.findById(borrowingId)
+                .orElseThrow(() -> new BorrowedBookNotFoundException(borrowingId));
     }
 }

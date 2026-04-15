@@ -8,6 +8,7 @@ import mk.ukim.finki.elibrary.server.model.domain.Seat;
 import mk.ukim.finki.elibrary.server.service.backend.application.RoomApplicationService;
 import mk.ukim.finki.elibrary.server.service.domain.RoomDomainService;
 import mk.ukim.finki.elibrary.server.service.domain.SeatDomainService;
+import mk.ukim.finki.elibrary.server.service.domain.impl.RoomDomainServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,7 +49,7 @@ public class RoomApplicationServiceImpl implements RoomApplicationService {
 
 
     @Override
-    public List<Seat> getSeatsInRoom(Long roomId) {
+    public List<RoomDomainServiceImpl.SeatDto> getSeatsInRoom(Long roomId) {
         return roomDomainService.getSeatsInRoom(roomId);
     }
 

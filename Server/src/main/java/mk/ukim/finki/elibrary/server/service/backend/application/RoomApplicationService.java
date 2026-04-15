@@ -3,7 +3,7 @@ import mk.ukim.finki.elibrary.server.dto.CreateRoomDto;
 import mk.ukim.finki.elibrary.server.dto.DisplayRoomDto;
 import mk.ukim.finki.elibrary.server.dto.update.UpdateRoomDto;
 import mk.ukim.finki.elibrary.server.model.domain.Room;
-import mk.ukim.finki.elibrary.server.model.domain.Seat;
+import mk.ukim.finki.elibrary.server.service.domain.impl.RoomDomainServiceImpl;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public interface RoomApplicationService {
 
     //List<Room> getAllRooms();
 
-    List<Seat> getSeatsInRoom(Long roomId);
+    List<RoomDomainServiceImpl.SeatDto> getSeatsInRoom(Long roomId);
 
     List<DisplayRoomDto> getRoomsWithAvailableSeats();
 

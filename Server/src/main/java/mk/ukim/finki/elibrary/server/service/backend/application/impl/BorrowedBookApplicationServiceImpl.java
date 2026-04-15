@@ -30,8 +30,8 @@ public class BorrowedBookApplicationServiceImpl implements BorrowedBookApplicati
     }
 
     @Override
-    public void deleteBookBorrowing(CreateBookBorrowLogDto dto) {
-        borrowedBookDomainService.deleteBookBorrowing(dto);
+    public void deleteBookBorrowing(Long id) {
+        borrowedBookDomainService.deleteBookBorrowing(id);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package mk.ukim.finki.elibrary.server.service.domain;
 import mk.ukim.finki.elibrary.server.model.domain.Room;
-import mk.ukim.finki.elibrary.server.model.domain.Seat;
+import mk.ukim.finki.elibrary.server.service.domain.impl.RoomDomainServiceImpl;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface RoomDomainService {
 
     List<Room> getAllRooms();
 
-    List<Seat> getSeatsInRoom(Long roomId);
+    List<RoomDomainServiceImpl.SeatDto> getSeatsInRoom(Long roomId);
 
 
     Room saveRoomEntity(Room room);
